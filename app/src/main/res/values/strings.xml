@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Santa Clara Golf Club</string>
+    <string name="login_name">Login</string>
+    <string name="register_name">Registrarse</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="user">Usuario</string>
+    <string name="name">Nombre</string>
+    <string name="surname">Apellidos</string>
+    <string name="phone">Nº Teléfono</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="repeat_password">Repetir Contraseña</string>
+    <string name="country">Pais</string>
+    <string name="btn_register">Registrar</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="reservation_day">Dia de la reserva</string>
+    <string name="reservation_hour">Hora de la reserva</string>
+    <string name="reservation_pack">Pack de la reserva</string>
+    <string name="reservation_guests">Acompañantes</string>
+    <string name="price">Precio</string>
+</resources>
