@@ -46,16 +46,7 @@ class Registrar : AppCompatActivity()  {
             val email = textEmail?.editText?.text.toString()
             val password = textPassword?.editText?.text.toString()
 
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(this){
-                    task ->
-                if (task.isSuccessful) {
-                    // El usuario se ha registrado correctamente
-                } else {
-                    // Se ha producido un error al registrar el usuario
-                    val message = task.exception?.message
-                    // Mostrar mensaje de error
-                }
-            }
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
         }
 
     }
