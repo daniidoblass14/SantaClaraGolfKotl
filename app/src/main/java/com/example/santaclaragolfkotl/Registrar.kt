@@ -4,12 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 
-class Registrar : AppCompatActivity()  {
+class Registrar : AppCompatActivity() {
 
     private var btnConfirmar: Button? = null
     private var textNombre: TextInputLayout? = null
@@ -18,6 +22,9 @@ class Registrar : AppCompatActivity()  {
     private var textEmail: TextInputLayout? = null
     private var textPassword: TextInputLayout? = null
     private var textRepeatPassword: TextInputLayout? = null
+
+    private val db = FirebaseFirestore.getInstance();
+    private var user = FirebaseAuth.getInstance().currentUser
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,23 +38,46 @@ class Registrar : AppCompatActivity()  {
         textEmail = findViewById<View>(R.id.textFieldEmail) as TextInputLayout
         textPassword = findViewById<View>(R.id.textFieldPassword) as TextInputLayout
         textRepeatPassword = findViewById<View>(R.id.textFieldRepeatPassword) as TextInputLayout
-        FirebaseApp.initializeApp(this)
 
+        if(!user?.isEmailVerified()!!){
+            Toast.makeText(this, "Correo no verificado", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            println("------CORREO VERIFICATED------")
+
+        }
 
         setUp()
     }
 
     private fun setUp() {
         title = "Registro de Usuario"
-
+        FirebaseApp.initializeApp(this)
 
         btnConfirmar!!.setOnClickListener {
 
+            val nombre = textNombre?.editText?.text.toString()
             val email = textEmail?.editText?.text.toString()
             val password = textPassword?.editText?.text.toString()
+            val repeatPassword = textRepeatPassword?.editText?.text.toString()
 
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            if (password.equals(repeatPassword)) {
+
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                        task ->
+                    if (task.isSuccessful) {
+
+                        user = FirebaseAuth.getInstance().currentUser
+                        user?.sendEmailVerification()
+                    }
+                    else{
+
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+            }
+
         }
-
     }
 }
