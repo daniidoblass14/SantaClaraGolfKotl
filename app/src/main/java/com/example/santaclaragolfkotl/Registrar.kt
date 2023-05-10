@@ -1,6 +1,7 @@
 package com.example.santaclaragolfkotl
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -57,6 +58,8 @@ class Registrar : AppCompatActivity() {
         btnConfirmar!!.setOnClickListener {
 
             val nombre = textNombre?.editText?.text.toString()
+            val apellido = textApellido?.editText?.text.toString()
+            val telefono = textTelefono?.editText?.text.toString()
             val email = textEmail?.editText?.text.toString()
             val password = textPassword?.editText?.text.toString()
             val repeatPassword = textRepeatPassword?.editText?.text.toString()
@@ -69,6 +72,11 @@ class Registrar : AppCompatActivity() {
 
                         user = FirebaseAuth.getInstance().currentUser
                         user?.sendEmailVerification()
+
+                        db.collection("temporal").document(email).set(hashMapOf("nombre" to nombre,"apellido" to apellido,"telefono" to telefono))
+
+                        val intentLogin = Intent(this, MainActivity::class.java)
+                        startActivity(intentLogin)
                     }
                     else{
 

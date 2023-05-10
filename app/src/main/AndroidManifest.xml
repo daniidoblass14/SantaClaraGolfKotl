@@ -30,6 +30,12 @@
         <activity
             android:name=".MenuReservas">
         </activity>
+        <activity
+            android:name=".ReservasCampo">
+        </activity>
+        <activity
+            android:name=".ReservasRestaurante">
+        </activity>
     </application>
 
 
