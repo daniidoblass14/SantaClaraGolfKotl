@@ -27,6 +27,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputDay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -44,6 +45,7 @@
             android:hint="@string/reservation_hour">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputHour"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
@@ -51,21 +53,45 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:id="@+id/textFieldGuests"
+            android:id="@+id/textInputLayoutPacks"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/reservation_pack"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/textFieldHour"
-            android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
-            android:hint="@string/reservation_pack">
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="16dp">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
+                android:id="@+id/packsFilledExposedDropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:imeOptions="actionNext"/>
+                android:inputType="none" />
+
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutGuests"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/reservation_guests"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutPacks"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/guestsFilledExposedDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
 
         <Button
@@ -81,7 +107,7 @@
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textFieldGuests" />
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutGuests" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
