@@ -36,6 +36,12 @@
         <activity
             android:name=".ReservasRestaurante">
         </activity>
+        <activity
+            android:name=".ReservasMaterial">
+        </activity>
+        <activity
+            android:name=".RecyclerActivity">
+        </activity>
     </application>
 
 

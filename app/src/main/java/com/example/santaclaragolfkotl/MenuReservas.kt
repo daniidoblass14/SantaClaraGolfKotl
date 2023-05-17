@@ -31,5 +31,11 @@ class MenuReservas: AppCompatActivity() {
             val intentReservaRestaurante = Intent (this,ReservasRestaurante::class.java)
             startActivity(intentReservaRestaurante)
         }
+
+        imagenMaterial.setOnClickListener {
+
+            val intentMaterial = Intent (this,ReservasMaterial::class.java)
+            startActivity(intentMaterial)
+        }
     }
 }

@@ -18,4 +18,9 @@
     <string name="reservation_pack">Pack de la reserva</string>
     <string name="reservation_guests">Acompañantes</string>
     <string name="price">Precio</string>
+    <string name="shoes">Calzados</string>
+    <string name="stick">Palos</string>
+    <string name="golf_balls">Pelotas</string>
+    <string name="golf_goves">Guantes</string>
+    <string name="pitch_fork">Arreglpiques</string>
 </resources>
