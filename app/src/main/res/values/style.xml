@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonContinueEnabled">
+        <item name="android:backgroundTint">@color/verde_hierba</item>
+    </style>
+
+    <style name="ButtonContinueDisabled">
+        <item name="android:backgroundTint">@color/rojo_deshabilitado</item>
+    </style>
+</resources>
