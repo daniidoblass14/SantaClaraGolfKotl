@@ -96,12 +96,14 @@ class MainActivity : AppCompatActivity() {
                         val nombre = it.get("nombre") as String?
                         val apellido = it.get("apellido") as String?
                         val telefono = it.get("telefono") as String?
+                        val email = it.get("email") as String?
 
                         db.collection("users").document(email).set(
                             hashMapOf(
                                 "nombre" to nombre,
                                 "apellido" to apellido,
-                                "telefono" to telefono
+                                "telefono" to telefono,
+                                "email" to email
                             )
                         )
                     }
