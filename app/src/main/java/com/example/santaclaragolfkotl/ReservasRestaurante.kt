@@ -2,6 +2,7 @@ package com.example.santaclaragolfkotl
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -25,6 +26,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 
 class ReservasRestaurante : AppCompatActivity() {
 
@@ -50,6 +57,9 @@ class ReservasRestaurante : AppCompatActivity() {
     private var textViewGuests: TextView? = null
 
     private val db = FirebaseFirestore.getInstance();
+    private var username: String? = null
+    private var userPhone: String? = null
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -61,7 +71,6 @@ class ReservasRestaurante : AppCompatActivity() {
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
-        val email = currentUser?.email
 
         textViewName = findViewById<TextView>(R.id.textViewName)
         textViewPhone = findViewById<TextView>(R.id.textViewPhone)
@@ -117,24 +126,20 @@ class ReservasRestaurante : AppCompatActivity() {
             layoutParams.topToBottom = R.id.textInputLayoutGuests
             cardView?.layoutParams = layoutParams
 
-            email.toString()
-
             if (currentUser != null && currentUser.email != null) {
                 val userEmail = currentUser.email
 
-                db.collection("users")
-                    .whereEqualTo("email", userEmail.toString())
-                    .get()
+                db.collection("users").whereEqualTo("email", userEmail.toString()).get()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val querySnapshot = task.result
                             if (querySnapshot != null && !querySnapshot.isEmpty) {
                                 val document = querySnapshot.documents[0]
-                                val userName = document.getString("nombre")
-                                val userPhone = document.getString("telefono")
+                                username = document.getString("nombre")
+                                userPhone = document.getString("telefono")
 
                                 // Utiliza los valores obtenidos del documento del usuario
-                                textViewName?.text = userName
+                                textViewName?.text = username
                                 textViewPhone?.text = userPhone
                             } else {
                                 // No se encontró ningún documento con el email del usuario actual
@@ -144,6 +149,9 @@ class ReservasRestaurante : AppCompatActivity() {
                         }
                     }
             }
+            textViewDate?.text = textFieldDay?.text.toString()
+            textViewTime?.text = textFieldHour?.text.toString()
+            textViewGuests?.text = guestsDropdown?.text.toString()
 
         }
 
@@ -166,6 +174,20 @@ class ReservasRestaurante : AppCompatActivity() {
 
         btnConfirm?.setOnClickListener {
 
+            val reserva = hashMapOf("nombre" to username,"telefono" to userPhone ,"fecha" to textViewDate?.text.toString(),"hora" to textViewTime?.text.toString(),
+            "acompañantes" to textViewGuests?.text.toString())
+
+            db.collection("reservasRestaurante").add(reserva).addOnSuccessListener {documentReference ->
+
+                // La reserva se ha insertado con éxito
+                val reservaId = documentReference.id
+                sendConfirmationEmail(reservaId) // Llamada a la función de envío de correo electrónico
+                showReservationSuccessDialog()
+            }
+                .addOnFailureListener { e ->
+                    // Ocurrió un error al insertar la reserva
+                    Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 
@@ -194,10 +216,7 @@ class ReservasRestaurante : AppCompatActivity() {
 
         timePicker = MaterialTimePicker.Builder()
             .setTimeFormat(if (isSystem24HourFormat) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
-            .setHour(8)
-            .setMinute(0)
-            .setTitleText("Select Time")
-            .build()
+            .setHour(8).setMinute(0).setTitleText("Select Time").build()
     }
 
     private fun setTimePickerListener() {
@@ -226,11 +245,9 @@ class ReservasRestaurante : AppCompatActivity() {
     }
 
     private fun showOutOfRangeDialog() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Invalid Time")
+        val dialog = AlertDialog.Builder(this).setTitle("Invalid Time")
             .setMessage("Please select a time between 8:00 and 16:00 or between 20:00 and 00:00.")
-            .setPositiveButton("OK", null)
-            .create()
+            .setPositiveButton("OK", null).create()
 
         dialog.show()
     }
@@ -248,11 +265,8 @@ class ReservasRestaurante : AppCompatActivity() {
 
         builder.setSelection(today)
         builder.setCalendarConstraints(
-            CalendarConstraints.Builder()
-                .setStart(today)
-                .setEnd(maxDate)
-                .setValidator(DateValidatorPointForward.from(today))
-                .build()
+            CalendarConstraints.Builder().setStart(today).setEnd(maxDate)
+                .setValidator(DateValidatorPointForward.from(today)).build()
         )
 
         datePicker = builder.build()
@@ -272,5 +286,44 @@ class ReservasRestaurante : AppCompatActivity() {
             textFieldDay?.setText(formattedDate)
         }
     }
+
+    private fun sendConfirmationEmail(reservaId: String) {
+        val cloudFunctionUrl = "CLOUD_FUNCTION_URL"
+        val url = "$cloudFunctionUrl/sendConfirmationEmail?reservaId=$reservaId"
+
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Error al llamar a la función de Firebase Cloud Functions
+                e.printStackTrace()
+                runOnUiThread {
+                    Toast.makeText(this@ReservasRestaurante, "Error al enviar el correo electrónico", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                // La función de Firebase Cloud Functions se llamó correctamente
+                // Puedes agregar aquí cualquier lógica adicional si es necesario
+                runOnUiThread {
+                    Toast.makeText(this@ReservasRestaurante, "Correo electrónico enviado correctamente", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+
+
+    private fun showReservationSuccessDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Reserva completada")
+            .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
+            .setPositiveButton("Aceptar") { _, _ ->
+                // Aquí puedes realizar alguna acción al hacer clic en el botón Aceptar, como redirigir al menú de la aplicación
+            }
+            .create()
+
+        dialog.show()
+    }
+
 
 }

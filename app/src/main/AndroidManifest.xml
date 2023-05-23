@@ -39,9 +39,7 @@
         <activity
             android:name=".ReservasMaterial">
         </activity>
-        <activity
-            android:name=".RecyclerActivity">
-        </activity>
+
     </application>
 
 

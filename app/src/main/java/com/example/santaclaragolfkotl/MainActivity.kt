@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                         val telefono = it.get("telefono") as String?
                         val email = it.get("email") as String?
 
-                        db.collection("users").document(email).set(
+                        db.collection("users").document(email.toString()).set(
                             hashMapOf(
                                 "nombre" to nombre,
                                 "apellido" to apellido,

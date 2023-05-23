@@ -40,7 +40,7 @@ class Registrar : AppCompatActivity() {
         textPassword = findViewById<View>(R.id.textFieldPassword) as TextInputLayout
         textRepeatPassword = findViewById<View>(R.id.textFieldRepeatPassword) as TextInputLayout
 
-        if(!user?.isEmailVerified()!!){
+        if (user != null && !user?.isEmailVerified!!) {
             Toast.makeText(this, "Correo no verificado", Toast.LENGTH_SHORT).show()
         }
         else{
@@ -73,7 +73,7 @@ class Registrar : AppCompatActivity() {
                         user = FirebaseAuth.getInstance().currentUser
                         user?.sendEmailVerification()
 
-                        db.collection("temporal").document(email).set(hashMapOf("nombre" to nombre,"apellido" to apellido,"telefono" to telefono))
+                        db.collection("temporal").document(email).set(hashMapOf("nombre" to nombre,"apellido" to apellido,"telefono" to telefono, "email" to email))
 
                         val intentLogin = Intent(this, MainActivity::class.java)
                         startActivity(intentLogin)
