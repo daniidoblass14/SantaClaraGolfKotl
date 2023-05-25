@@ -39,7 +39,12 @@
         <activity
             android:name=".ReservasMaterial">
         </activity>
-
+        <activity
+            android:name=".AdminMenu">
+        </activity>
+        <activity
+            android:name=".Movements">
+        </activity>
     </application>
 
 

@@ -26,4 +26,11 @@
     <string name="golf_goves">Guantes</string>
     <string name="pitch_fork">Arreglpiques</string>
     <string name="ok">Ok</string>
+    <string name="change_lenguage">Cambiar Idioma</string>
+    <string name="not_count">¿No tienes cuenta? Pulsa aquí</string>
+    <string name="movements">Ver movimientos</string>
+    <string name="manage_users">Administrar Usuarios</string>
+    <string name="booking_today">Reservas de hoy</string>
+    <string name="booking_type">Tipo Reserva</string>
+
 </resources>

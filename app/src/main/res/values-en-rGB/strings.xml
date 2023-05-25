@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Santa Clara Golf Club</string>
+    <string name="login_name">Login</string>
+    <string name="register_name">Sign up</string>
+    <string name="btn_login">Log in</string>
+    <string name="user">User</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Confirm password</string>
+    <string name="country">Country</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="reservation_day">Booking date</string>
+    <string name="reservation_hour">Hour date</string>
+    <string name="reservation_pack">Pack date</string>
+    <string name="reservation_guests">Guests</string>
+    <string name="price">Price</string>
+    <string name="shoes">Shoes</string>
+    <string name="stick">Sticks</string>
+    <string name="golf_balls">Balls</string>
+    <string name="golf_goves">Gloves</string>
+    <string name="pitch_fork">Pitch fork</string>
+    <string name="ok">Ok</string>
+    <string name="change_lenguage">Change lenguage</string>
+    <string name="not_count">Don\'t have an account? Click here.</string>
+    <string name="movements">Check transactions</string>
+    <string name="manage_users">Manage users</string>
+    <string name="booking_today">Bookings for today</string>
+    <string name="booking_type">Booking type</string>
+</resources>

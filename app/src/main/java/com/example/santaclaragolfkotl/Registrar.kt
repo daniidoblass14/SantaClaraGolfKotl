@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class Registrar : AppCompatActivity() {
@@ -32,7 +30,7 @@ class Registrar : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.register_layout)
 
-        btnConfirmar = findViewById(R.id.IniciarSesion)
+        btnConfirmar = findViewById(R.id.btnInit)
         textNombre = findViewById<View>(R.id.textFieldName) as TextInputLayout
         textApellido = findViewById<View>(R.id.textFieldSurrname) as TextInputLayout
         textTelefono = findViewById<View>(R.id.textFieldPhone) as TextInputLayout

@@ -25,18 +25,20 @@ class MainActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance();
     private var user = FirebaseAuth.getInstance().currentUser
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // Inicializar el TextView y asignarle una referencia
-        tvRegistrarse = findViewById(R.id.tvRegistrar)
-        btnIniciarSesion = findViewById(R.id.IniciarSesion)
-        textEmail = findViewById<View>(R.id.textFieldUsuario) as TextInputLayout?
+        tvRegistrarse = findViewById(R.id.tvLogIn)
+        btnIniciarSesion = findViewById(R.id.btnInit)
+        textEmail = findViewById<View>(R.id.textFieldUser) as TextInputLayout?
         textPassword = findViewById<View>(R.id.textFieldPassword) as TextInputLayout?
 
         // Agregar un listener para el clic del TextView
         tvRegistrarse?.setOnClickListener {
+
 
             val intentRegistrar = Intent(this, Registrar::class.java)
             startActivity(intentRegistrar)
@@ -56,6 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         btnIniciarSesion?.setOnClickListener {
 
+            /*
             // Obtener valores de correo electrónico y contraseña ingresados por el usuario
             val email = textEmail?.editText?.text.toString()
             val password = textPassword?.editText?.text.toString()
@@ -70,15 +73,50 @@ class MainActivity : AppCompatActivity() {
                         val signInMethods = task.result?.signInMethods ?: emptyList()
                         if (signInMethods.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
                             // El correo electrónico ha sido verificado
-                            Toast.makeText(this, "Correo Verificado", Toast.LENGTH_SHORT).show()
-                            iniciarSesion(email, password)
                             insertarUsuario(email)
+                            isAdmin(email){isAdmin->
+                                if (isAdmin){
+                                    val intentAdminMenu = Intent(this, AdminMenu::class.java)
+                                    startActivity(intentAdminMenu)
+                                } else {
+                                    iniciarSesion(email, password)
+
+                                }
+                            }
+                            Toast.makeText(this, "Correo Verificado", Toast.LENGTH_SHORT).show()
                         } else {
                             // El correo electrónico no ha sido verificado
                             Toast.makeText(this, "Correo No Verificado", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
+
+*/
+
+            val intentMovements = Intent(this, Movements::class.java)
+            startActivity(intentMovements)
+        }
+    }
+
+    private fun isAdmin(email: String, callback: (Boolean) -> Unit) {
+
+        db.collection("users").whereEqualTo("email", email).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val result = task.result
+                if (result != null && !result.isEmpty) {
+                    val document = result.documents[0]
+                    val rol = document.getString("rol")
+                    if (rol == "admin") {
+                        // El usuario tiene rol de admin
+                        Toast.makeText(this, "Eres un administrador", Toast.LENGTH_SHORT).show()
+                        callback(true)
+                    } else {
+                        // El usuario no tiene rol de admin
+                        Toast.makeText(this, "No eres un administrador", Toast.LENGTH_SHORT).show()
+                        callback(false)
+                    }
+                }
+            }
         }
     }
 
@@ -103,7 +141,8 @@ class MainActivity : AppCompatActivity() {
                                 "nombre" to nombre,
                                 "apellido" to apellido,
                                 "telefono" to telefono,
-                                "email" to email
+                                "email" to email,
+                                "rol" to "user"
                             )
                         )
                     }

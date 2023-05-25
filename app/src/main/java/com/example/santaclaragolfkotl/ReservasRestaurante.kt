@@ -181,7 +181,7 @@ class ReservasRestaurante : AppCompatActivity() {
 
                 // La reserva se ha insertado con éxito
                 val reservaId = documentReference.id
-                sendConfirmationEmail(reservaId) // Llamada a la función de envío de correo electrónico
+
                 showReservationSuccessDialog()
             }
                 .addOnFailureListener { e ->
