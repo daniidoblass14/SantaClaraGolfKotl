@@ -22,24 +22,22 @@ class MainActivity : AppCompatActivity() {
     private var textEmail: TextInputLayout? = null
     private var textPassword: TextInputLayout? = null
 
-    private val db = FirebaseFirestore.getInstance();
-    private var user = FirebaseAuth.getInstance().currentUser
-
+    private val db = FirebaseFirestore.getInstance()
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Inicializar el TextView y asignarle una referencia
         tvRegistrarse = findViewById(R.id.tvLogIn)
         btnIniciarSesion = findViewById(R.id.btnInit)
         textEmail = findViewById<View>(R.id.textFieldUser) as TextInputLayout?
         textPassword = findViewById<View>(R.id.textFieldPassword) as TextInputLayout?
 
-        // Agregar un listener para el clic del TextView
+        firebaseAuth = FirebaseAuth.getInstance()
+
+
         tvRegistrarse?.setOnClickListener {
-
-
             val intentRegistrar = Intent(this, Registrar::class.java)
             startActivity(intentRegistrar)
         }
@@ -50,56 +48,42 @@ class MainActivity : AppCompatActivity() {
     private fun setUp() {
         FirebaseApp.initializeApp(this)
 
-        tvRegistrarse?.setOnClickListener {
-
-            val intentRegistrar = Intent(this, Registrar::class.java)
-            startActivity(intentRegistrar)
-        }
-
         btnIniciarSesion?.setOnClickListener {
-
-            /*
-            // Obtener valores de correo electrónico y contraseña ingresados por el usuario
             val email = textEmail?.editText?.text.toString()
             val password = textPassword?.editText?.text.toString()
 
-            //Comprobamos si el email introducido está verificado o no.
 
-            FirebaseAuth.getInstance().fetchSignInMethodsForEmail(email)
-                .addOnCompleteListener { task ->
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
 
                     if (task.isSuccessful) {
+                        val user = FirebaseAuth.getInstance().currentUser
+                        val verify = user?.isEmailVerified
 
-                        val signInMethods = task.result?.signInMethods ?: emptyList()
-                        if (signInMethods.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
-                            // El correo electrónico ha sido verificado
+                        if (verify == true) {
                             insertarUsuario(email)
-                            isAdmin(email){isAdmin->
-                                if (isAdmin){
-                                    val intentAdminMenu = Intent(this, AdminMenu::class.java)
-                                    startActivity(intentAdminMenu)
+                            isAdmin(email) { isAdmin ->
+                                if (isAdmin) {
+                                    iniciarSesionAdmin(email, password)
                                 } else {
-                                    iniciarSesion(email, password)
-
+                                    iniciarSesionUser(email, password)
                                 }
                             }
-                            Toast.makeText(this, "Correo Verificado", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Correo verificado", Toast.LENGTH_SHORT).show()
+
                         } else {
-                            // El correo electrónico no ha sido verificado
-                            Toast.makeText(this, "Correo No Verificado", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "El correo no está verificado", Toast.LENGTH_SHORT)
+                                .show()
                         }
+
                     }
                 }
 
-*/
 
-            val intentMovements = Intent(this, Movements::class.java)
-            startActivity(intentMovements)
         }
     }
 
     private fun isAdmin(email: String, callback: (Boolean) -> Unit) {
-
         db.collection("users").whereEqualTo("email", email).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val result = task.result
@@ -107,11 +91,9 @@ class MainActivity : AppCompatActivity() {
                     val document = result.documents[0]
                     val rol = document.getString("rol")
                     if (rol == "admin") {
-                        // El usuario tiene rol de admin
                         Toast.makeText(this, "Eres un administrador", Toast.LENGTH_SHORT).show()
                         callback(true)
                     } else {
-                        // El usuario no tiene rol de admin
                         Toast.makeText(this, "No eres un administrador", Toast.LENGTH_SHORT).show()
                         callback(false)
                     }
@@ -121,67 +103,75 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun insertarUsuario(email: String) {
-
         db.collection("users").whereEqualTo("email", email).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val result = task.result
                 if (result != null && !result.isEmpty) {
-                    //Ya existe el usuario.
-                    Toast.makeText(this, "Bienvenido de nuevo," + email, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Bienvenido de nuevo, $email", Toast.LENGTH_SHORT).show()
                 } else {
-                    //No existe el usuario.
-                    db.collection("temporal").document(email).get().addOnSuccessListener {
-                        val nombre = it.get("nombre") as String?
-                        val apellido = it.get("apellido") as String?
-                        val telefono = it.get("telefono") as String?
-                        val email = it.get("email") as String?
+                    db.collection("temporal").document(email).get()
+                        .addOnSuccessListener { document ->
+                            val nombre = document.getString("nombre")
+                            val apellido = document.getString("apellido")
+                            val telefono = document.getString("telefono")
+                            val rol = document.getString("rol")
 
-                        db.collection("users").document(email.toString()).set(
-                            hashMapOf(
-                                "nombre" to nombre,
-                                "apellido" to apellido,
-                                "telefono" to telefono,
-                                "email" to email,
-                                "rol" to "user"
+                            db.collection("users").document(email).set(
+                                hashMapOf(
+                                    "nombre" to nombre,
+                                    "apellido" to apellido,
+                                    "telefono" to telefono,
+                                    "email" to email,
+                                    "rol" to rol
+                                )
                             )
-                        )
-                    }
-
+                        }
                 }
             }
         }
     }
 
-    private fun iniciarSesion(email: String, password: String) {
-
-        // Verificar la autenticación del usuario con Firebase
+    private fun iniciarSesionUser(email: String, password: String) {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // El usuario inició sesión correctamente
                     Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-
-                    val intentMenuResrvas = Intent(this, MenuReservas::class.java)
-                    startActivity(intentMenuResrvas)
-
+                    val intentMenuReservas = Intent(this, MenuReservas::class.java)
+                    startActivity(intentMenuReservas)
+                    finish()
                 } else {
-                    // Error al iniciar sesión
                     val exception = task.exception
                     if (exception is FirebaseAuthInvalidUserException) {
-                        // El usuario no existe
                         Toast.makeText(this, "El usuario no existe", Toast.LENGTH_SHORT).show()
                     } else if (exception is FirebaseAuthInvalidCredentialsException) {
-                        // La contraseña es incorrecta
                         Toast.makeText(this, "La contraseña es incorrecta", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        // Otro tipo de error
-                        Toast.makeText(this, "Error al iniciar sesión", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
     }
 
-
+    private fun iniciarSesionAdmin(email: String, password: String) {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    val intentAdminMenu = Intent(this, AdminMenu::class.java)
+                    startActivity(intentAdminMenu)
+                    finish()
+                } else {
+                    val exception = task.exception
+                    if (exception is FirebaseAuthInvalidUserException) {
+                        Toast.makeText(this, "El usuario no existe", Toast.LENGTH_SHORT).show()
+                    } else if (exception is FirebaseAuthInvalidCredentialsException) {
+                        Toast.makeText(this, "La contraseña es incorrecta", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        Toast.makeText(this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+    }
 }

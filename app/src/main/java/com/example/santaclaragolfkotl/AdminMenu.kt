@@ -22,5 +22,11 @@ class AdminMenu:AppCompatActivity() {
             val intentMovements = Intent(this, Movements::class.java)
             startActivity(intentMovements)
         }
+
+        btnManageUser?.setOnClickListener {
+
+            val intentManageUsers = Intent(this, ManageUsers::class.java)
+            startActivity(intentManageUsers)
+        }
     }
 }

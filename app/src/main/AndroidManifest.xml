@@ -45,6 +45,9 @@
         <activity
             android:name=".Movements">
         </activity>
+        <activity
+            android:name=".ManageUsers">
+        </activity>
     </application>
 
 
