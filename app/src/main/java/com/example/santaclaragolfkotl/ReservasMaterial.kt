@@ -95,12 +95,6 @@ class ReservasMaterial: AppCompatActivity() {
         btnContinue?.setOnClickListener {
 
             btnContinue?.visibility = View.GONE
-            textInputLayoutPalos?.visibility = View.GONE
-            textInputLayoutGuantes?.visibility = View.GONE
-            textInputLayoutPelotas?.visibility = View.GONE
-            textInputLayoutCalzados?.visibility = View.GONE
-            textInputLayoutArreglapiques?.visibility = View.GONE
-
             cardView?.visibility = View.VISIBLE
             btnConfirm?.visibility = View.VISIBLE
             btnCancel?.visibility = View.VISIBLE
@@ -112,7 +106,7 @@ class ReservasMaterial: AppCompatActivity() {
             arreglaPiquesDropdown?.isEnabled = false
 
             val layoutParams = cardView?.layoutParams as ConstraintLayout.LayoutParams
-            layoutParams.topToBottom = R.id.textInputLayoutGuests
+            layoutParams.topToBottom = R.id.textInputLayoutArreglapiques
             cardView?.layoutParams = layoutParams
 
             if (currentUser != null && currentUser.email != null) {
@@ -147,12 +141,6 @@ class ReservasMaterial: AppCompatActivity() {
 
         btnCancel?.setOnClickListener {
             btnContinue?.visibility = View.VISIBLE
-            textInputLayoutPalos?.visibility = View.VISIBLE
-            textInputLayoutGuantes?.visibility = View.VISIBLE
-            textInputLayoutPelotas?.visibility = View.VISIBLE
-            textInputLayoutCalzados?.visibility = View.VISIBLE
-            textInputLayoutArreglapiques?.visibility = View.VISIBLE
-
             cardView?.visibility = View.GONE
             btnConfirm?.visibility = View.GONE
             btnCancel?.visibility = View.GONE

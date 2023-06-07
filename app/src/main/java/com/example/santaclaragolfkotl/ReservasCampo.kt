@@ -64,9 +64,17 @@ class ReservasCampo: AppCompatActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
 
+        textViewName = findViewById<TextView>(R.id.textViewName)
+        textViewPhone = findViewById<TextView>(R.id.textViewPhone)
+        textViewDate = findViewById<TextView>(R.id.textViewDate)
+        textViewTime = findViewById<TextView>(R.id.textViewTime)
+        textViewGuests = findViewById<TextView>(R.id.textViewGuests)
+        textViewPack = findViewById<TextView>(R.id.textViewPack)
+
         btnConfirm = findViewById<Button>(R.id.btnConfirm)
         btnCancel = findViewById<Button>(R.id.btnCancel)
         btnContinue = findViewById<Button>(R.id.btnContinue)
+        cardView = findViewById<CardView>(R.id.cardView)
 
         textFieldDay = findViewById<TextInputEditText>(R.id.textInputDay)
         textFieldDay?.inputType = InputType.TYPE_NULL
@@ -92,11 +100,6 @@ class ReservasCampo: AppCompatActivity() {
 
         btnContinue?.setOnClickListener {
             btnContinue?.visibility = View.GONE
-            textFieldDay?.visibility = View.GONE
-            textFieldHour?.visibility = View.GONE
-            textInputLayoutPacks?.visibility = View.GONE
-            textInputLayoutGuests?.visibility = View.GONE
-
             cardView?.visibility = View.VISIBLE
             btnConfirm?.visibility = View.VISIBLE
             btnCancel?.visibility = View.VISIBLE
@@ -159,11 +162,6 @@ class ReservasCampo: AppCompatActivity() {
         btnCancel?.setOnClickListener {
 
             btnContinue?.visibility = View.VISIBLE
-            textFieldDay?.visibility = View.VISIBLE
-            textFieldHour?.visibility = View.VISIBLE
-            textInputLayoutPacks?.visibility = View.VISIBLE
-            textInputLayoutGuests?.visibility = View.VISIBLE
-
             cardView?.visibility = View.GONE
             btnConfirm?.visibility = View.GONE
             btnCancel?.visibility = View.GONE

@@ -63,6 +63,17 @@
                 android:src="@drawable/buggy"
                 android:importantForAccessibility="yes" />
 
+            <ImageButton
+                android:id="@+id/btnConfiguracion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_settings_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="8dp"
+                android:background="@android:color/transparent"
+                android:importantForAccessibility="yes" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>

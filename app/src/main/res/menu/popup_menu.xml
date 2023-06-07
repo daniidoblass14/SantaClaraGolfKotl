@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_cambiar_contrasena"
+        android:title="Cambiar contraseña" />
+    <item
+        android:id="@+id/menu_cambiar_email"
+        android:title="Cambiar email" />
+    <item
+        android:id="@+id/menu_informacion"
+        android:title="Información" />
+</menu>
