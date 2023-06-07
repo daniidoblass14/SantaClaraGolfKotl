@@ -15,7 +15,10 @@ import java.util.*
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import android.text.format.DateFormat
+import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -23,6 +26,9 @@ class ReservasCampo: AppCompatActivity() {
 
     private var textFieldDay : TextInputEditText? = null
     private var textFieldHour : TextInputEditText? = null
+
+    private var textInputLayoutPacks: TextInputLayout? = null
+    private var textInputLayoutGuests: TextInputLayout? = null
 
     private var packsDropdown : AutoCompleteTextView? = null
     private var guestsDropdown : AutoCompleteTextView? = null
@@ -35,16 +41,41 @@ class ReservasCampo: AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance();
 
+    private var btnContinue: Button? = null
+    private var btnConfirm: Button? = null
+    private var btnCancel: Button? = null
+
+    private var cardView: CardView? = null
+    private var username: String? = null
+    private var userPhone: String? = null
+
+    private var textViewName: TextView? = null
+    private var textViewPhone: TextView? = null
+    private var textViewDate: TextView? = null
+    private var textViewTime: TextView? = null
+    private var textViewPack: TextView? = null
+    private var textViewGuests: TextView? = null
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.field_reservation_layout)
+
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser
+
+        btnConfirm = findViewById<Button>(R.id.btnConfirm)
+        btnCancel = findViewById<Button>(R.id.btnCancel)
+        btnContinue = findViewById<Button>(R.id.btnContinue)
 
         textFieldDay = findViewById<TextInputEditText>(R.id.textInputDay)
         textFieldDay?.inputType = InputType.TYPE_NULL
 
         textFieldHour = findViewById<TextInputEditText>(R.id.textInputHour)
         textFieldHour?.inputType = InputType.TYPE_NULL
+
+        textInputLayoutPacks = findViewById<TextInputLayout>(R.id.textInputLayoutPacks)
+        textInputLayoutGuests = findViewById<TextInputLayout>(R.id.textInputLayoutGuests)
 
         packsDropdown = findViewById<AutoCompleteTextView>(R.id.packsFilledExposedDropdown)
         guestsDropdown = findViewById<AutoCompleteTextView>(R.id.guestsFilledExposedDropdown)
@@ -58,6 +89,93 @@ class ReservasCampo: AppCompatActivity() {
         setupTimePicker()
         setTimePickerListener()
         searchPacks()
+
+        btnContinue?.setOnClickListener {
+            btnContinue?.visibility = View.GONE
+            textFieldDay?.visibility = View.GONE
+            textFieldHour?.visibility = View.GONE
+            textInputLayoutPacks?.visibility = View.GONE
+            textInputLayoutGuests?.visibility = View.GONE
+
+            cardView?.visibility = View.VISIBLE
+            btnConfirm?.visibility = View.VISIBLE
+            btnCancel?.visibility = View.VISIBLE
+
+            packsDropdown?.isEnabled = false
+            guestsDropdown?.isEnabled = false
+
+            val layoutParams = cardView?.layoutParams as ConstraintLayout.LayoutParams
+            layoutParams.topToBottom = R.id.textInputLayoutGuests
+            cardView?.layoutParams = layoutParams
+
+            if (currentUser != null && currentUser.email != null) {
+                val userEmail = currentUser.email
+
+                db.collection("users").whereEqualTo("email", userEmail.toString()).get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val querySnapshot = task.result
+                            if (querySnapshot != null && !querySnapshot.isEmpty) {
+                                val document = querySnapshot.documents[0]
+                                username = document.getString("nombre")
+                                userPhone = document.getString("telefono")
+
+                                // Utiliza los valores obtenidos del documento del usuario
+                                textViewName?.text = username
+                                textViewPhone?.text = userPhone
+                            } else {
+                                // No se encontró ningún documento con el email del usuario actual
+                            }
+                        } else {
+                            // Error al realizar la consulta
+                        }
+                    }
+            }
+            textViewDate?.text = textFieldDay?.text.toString()
+            textViewTime?.text = textFieldHour?.text.toString()
+            textViewPack?.text = packsDropdown?.text.toString()
+            textViewGuests?.text = guestsDropdown?.text.toString()
+        }
+
+        btnConfirm?.setOnClickListener {
+
+            val reserva = hashMapOf("nombre" to username,"telefono" to userPhone ,"fecha" to textViewDate?.text.toString(),"hora" to textViewTime?.text.toString(),
+                "pack de la reserva" to packsDropdown?.text.toString(),"acompañantes" to guestsDropdown?.text.toString())
+
+            db.collection("reservasCampo").add(reserva).addOnSuccessListener {documentReference ->
+
+                // La reserva se ha insertado con éxito
+                val reservaId = documentReference.id
+
+                showReservationSuccessDialog()
+            }
+                .addOnFailureListener { e ->
+                    // Ocurrió un error al insertar la reserva
+                    Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+        }
+
+        btnCancel?.setOnClickListener {
+
+            btnContinue?.visibility = View.VISIBLE
+            textFieldDay?.visibility = View.VISIBLE
+            textFieldHour?.visibility = View.VISIBLE
+            textInputLayoutPacks?.visibility = View.VISIBLE
+            textInputLayoutGuests?.visibility = View.VISIBLE
+
+            cardView?.visibility = View.GONE
+            btnConfirm?.visibility = View.GONE
+            btnCancel?.visibility = View.GONE
+
+            packsDropdown?.isEnabled = true
+            guestsDropdown?.isEnabled = true
+
+            packsDropdown?.setText("")
+            guestsDropdown?.setText("")
+            textFieldDay?.setText("")
+            textFieldHour?.setText("")
+        }
 
     }
 
@@ -169,5 +287,15 @@ class ReservasCampo: AppCompatActivity() {
     }
 
 
+    private fun showReservationSuccessDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Reserva completada")
+            .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
+            .setPositiveButton("Aceptar") { _, _ ->
+                // Aquí puedes realizar alguna acción al hacer clic en el botón Aceptar, como redirigir al menú de la aplicación
+            }
+            .create()
 
+        dialog.show()
+    }
 }
