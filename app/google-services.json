@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "585838406286",
+    "firebase_url": "https://prueba-ee670-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "prueba-ee670",
+    "storage_bucket": "prueba-ee670.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585838406286:android:dfb329e1349cd51a0ff7df",
+        "android_client_info": {
+          "package_name": "com.example.santaclaragolfkotl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "585838406286-dqkr7v6nq1pb0qn6ilbjto5sfbvlfgg2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEaPdGwqpxntnefyehoqjsLixVjxdaHGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "585838406286-dqkr7v6nq1pb0qn6ilbjto5sfbvlfgg2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

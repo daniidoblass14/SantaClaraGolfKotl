@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -170,6 +171,24 @@ class ReservasMaterial: AppCompatActivity() {
 
         }
 
+        btnConfirm?.setOnClickListener {
+
+            val reserva = hashMapOf("nombre" to username,"telefono" to userPhone ,"palos" to palosDropdown?.text.toString(),"guantes" to guantesDropdown?.text.toString(),
+                "calzado" to calzadoDropdown?.text.toString(),"pelotas" to pelotasDropdown?.text.toString(),"Arreglapiques" to arreglaPiquesDropdown?.text.toString())
+
+            db.collection("reservasMaterial").add(reserva).addOnSuccessListener {documentReference ->
+
+                // La reserva se ha insertado con éxito
+                val reservaId = documentReference.id
+
+                showReservationSuccessDialog()
+            }
+                .addOnFailureListener { e ->
+                    // Ocurrió un error al insertar la reserva
+                    Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+
     }
 
     private fun rellenar() {
@@ -290,5 +309,18 @@ class ReservasMaterial: AppCompatActivity() {
 
         }
     }
+
+    private fun showReservationSuccessDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Reserva completada")
+            .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
+            .setPositiveButton("Aceptar") { _, _ ->
+                // Aquí puedes realizar alguna acción al hacer clic en el botón Aceptar, como redirigir al menú de la aplicación
+            }
+            .create()
+
+        dialog.show()
+    }
+
 
 }
