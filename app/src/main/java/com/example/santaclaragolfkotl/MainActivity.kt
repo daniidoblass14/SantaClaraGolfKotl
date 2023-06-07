@@ -1,13 +1,16 @@
 package com.example.santaclaragolfkotl
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseApp
@@ -20,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class MainActivity : AppCompatActivity() {
 
     private var tvRegistrarse: TextView? = null
+    private var tvChangePassword: TextView? = null
     private var btnIniciarSesion: Button? = null
     private var textEmail: TextInputLayout? = null
     private var textPassword: TextInputLayout? = null
@@ -34,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         tvRegistrarse = findViewById(R.id.tvLogIn)
+        tvChangePassword = findViewById(R.id.tvChangePassword)
         btnIniciarSesion = findViewById(R.id.btnInit)
         textEmail = findViewById<View>(R.id.textFieldUser) as TextInputLayout?
         textPassword = findViewById<View>(R.id.textFieldPassword) as TextInputLayout?
@@ -44,6 +49,40 @@ class MainActivity : AppCompatActivity() {
         tvRegistrarse?.setOnClickListener {
             val intentRegistrar = Intent(this, Registrar::class.java)
             startActivity(intentRegistrar)
+        }
+
+        tvChangePassword?.setOnClickListener {
+            val dialogBuilder = AlertDialog.Builder(this)
+            val input = EditText(this)
+
+            dialogBuilder.setTitle("Ingrese su correo electrónico")
+            dialogBuilder.setView(input)
+            dialogBuilder.setPositiveButton("Enviar", DialogInterface.OnClickListener { dialog, which ->
+                val email = input.text.toString().trim()
+
+                FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        val resultDialogBuilder = AlertDialog.Builder(this)
+
+                        if (task.isSuccessful) {
+                            resultDialogBuilder.setTitle("Correo electrónico enviado")
+                            resultDialogBuilder.setMessage("Se ha enviado un correo electrónico a $email para restablecer la contraseña.")
+                        } else {
+                            resultDialogBuilder.setTitle("Error al enviar el correo electrónico")
+                            resultDialogBuilder.setMessage("Hubo un error al enviar el correo electrónico. Verifique la dirección de correo electrónico e inténtelo nuevamente.")
+                        }
+
+                        resultDialogBuilder.setPositiveButton("Aceptar", null)
+                        val resultDialog = resultDialogBuilder.create()
+                        resultDialog.show()
+                    }
+            })
+            dialogBuilder.setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, which ->
+                dialog.cancel()
+            })
+
+            val dialog = dialogBuilder.create()
+            dialog.show()
         }
 
         setUp()

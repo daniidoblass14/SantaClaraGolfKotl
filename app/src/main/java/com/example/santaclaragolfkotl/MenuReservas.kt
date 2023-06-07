@@ -202,6 +202,14 @@ class MenuReservas : AppCompatActivity() {
                         dialog.show()
                         true
                     }
+
+                    R.id.menu_logOut -> {
+                        FirebaseAuth.getInstance().signOut()
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                        true
+                    }
                     else -> false
                 }
             }
