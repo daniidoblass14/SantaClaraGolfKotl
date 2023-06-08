@@ -33,5 +33,20 @@
     <string name="manage_users">Manage users</string>
     <string name="booking_today">Bookings for today</string>
     <string name="booking_type">Booking type</string>
-    <string name="forgot_password">Forgot your password?</string>
+    <string name="forgot_password">Forgot your password?</string> <string name="introduce_email">Enter your email address.</string>
+    <string name="email_sent">Email sent.</string>
+    <string name="email_sent_to">An email has been sent to</string>
+    <string name="to_reset_password">To reset your password.</string>
+    <string name="title_error_sent_email">Error al enviar el correo electrónico</string>
+    <string name="error_verify_email">Hubo un error al enviar el correo electrónico. Verifique la dirección de correo electrónico e inténtelo nuevamente.</string>
+    <string name="accept">Aceptar</string>
+    <string name="user_no_exist">The user does not exist.</string>
+    <string name="password_failed">The password is incorrect</string>
+    <string name="init_error">Error logging in</string>
+    <string name="be_admin">You are an administrator</string>
+    <string name="not_be_admin">You are not an administrator</string>
+    <string name="email_no_verify">The email is not verified</string>
+    <string name="send">Send</string>
+    <string name="invalid_user">Usuario no valido</string>
+    <string name="invalid_password">Contraseña no valida</string>
 </resources>

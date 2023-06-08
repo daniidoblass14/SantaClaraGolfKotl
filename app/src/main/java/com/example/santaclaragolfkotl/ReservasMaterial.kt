@@ -9,13 +9,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class ReservasMaterial: AppCompatActivity() {
 
@@ -61,13 +60,15 @@ class ReservasMaterial: AppCompatActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
 
+        val currentDate = Date()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val formattedDate = dateFormat.format(currentDate)
+
         textInputLayoutPalos = findViewById<TextInputLayout>(R.id.textInputLayoutPalos)
         textInputLayoutGuantes = findViewById<TextInputLayout>(R.id.textInputLayoutGuantes)
         textInputLayoutPelotas = findViewById<TextInputLayout>(R.id.textInputLayoutPelotas)
         textInputLayoutCalzados = findViewById<TextInputLayout>(R.id.textInputLayoutCalzados)
         textInputLayoutArreglapiques = findViewById<TextInputLayout>(R.id.textInputLayoutArreglapiques)
-
-
 
         textViewName = findViewById<TextView>(R.id.textViewName)
         textViewPhone = findViewById<TextView>(R.id.textViewPhone)
@@ -164,12 +165,14 @@ class ReservasMaterial: AppCompatActivity() {
             val reserva = hashMapOf("nombre" to username,"telefono" to userPhone ,"palos" to palosDropdown?.text.toString(),"guantes" to guantesDropdown?.text.toString(),
                 "calzado" to calzadoDropdown?.text.toString(),"pelotas" to pelotasDropdown?.text.toString(),"Arreglapiques" to arreglaPiquesDropdown?.text.toString())
 
+            val reservaGeneral = hashMapOf("nombre" to username, "telefono" to userPhone, "tipo reserva" to "material","fecha" to formattedDate)
+
             db.collection("reservasMaterial").add(reserva).addOnSuccessListener {documentReference ->
 
                 // La reserva se ha insertado con éxito
                 val reservaId = documentReference.id
 
-                showReservationSuccessDialog()
+                showReservationSuccessDialog(reservaGeneral)
             }
                 .addOnFailureListener { e ->
                     // Ocurrió un error al insertar la reserva
@@ -298,12 +301,26 @@ class ReservasMaterial: AppCompatActivity() {
         }
     }
 
-    private fun showReservationSuccessDialog() {
+    private fun showReservationSuccessDialog(reservaGeneral: HashMap<String, String?>) {
         val dialog = AlertDialog.Builder(this)
             .setTitle("Reserva completada")
             .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
             .setPositiveButton("Aceptar") { _, _ ->
-                // Aquí puedes realizar alguna acción al hacer clic en el botón Aceptar, como redirigir al menú de la aplicación
+                db.collection("reservasGeneral").add(reservaGeneral).addOnSuccessListener { documentReference ->
+
+                    // La reserva se ha insertado con éxito
+                    val reservaId = documentReference.id
+
+                    // Redirigir al menú de las reservas
+                    val intent = Intent(this, MenuReservas::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                    .addOnFailureListener { e ->
+                        // Ocurrió un error al insertar la reserva
+                        Toast.makeText(this, "Error al crear la reserva General: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .create()
 

@@ -33,5 +33,21 @@
     <string name="booking_today">Reservas de hoy</string>
     <string name="booking_type">Tipo Reserva</string>
     <string name="forgot_password">¿Olvidate la contraseña?</string>
+    <string name="introduce_email">Ingrese su correo electrónico</string>
+    <string name="email_sent">Correo electrónico enviado?</string>
+    <string name="email_sent_to">Se ha enviado un correo electrónico a</string>
+    <string name="to_reset_password">para restablecer la contraseña.</string>
+    <string name="title_error_sent_email">Error al enviar el correo electrónico</string>
+    <string name="error_verify_email">Hubo un error al enviar el correo electrónico. Verifique la dirección de correo electrónico e inténtelo nuevamente.</string>
+    <string name="accept">Aceptar</string>
+    <string name="user_no_exist">El usuario no existe</string>
+    <string name="password_failed">La contraseña es incorrecta</string>
+    <string name="init_error">Error al iniciar sesión</string>
+    <string name="be_admin">Eres un administrador</string>
+    <string name="not_be_admin">No eres un administrador</string>
+    <string name="email_no_verify">El correo no está verificado</string>
+    <string name="send">Enviar</string>
+    <string name="invalid_user">Usuario no valido</string>
+    <string name="invalid_password">Contraseña no valida</string>
 
 </resources>

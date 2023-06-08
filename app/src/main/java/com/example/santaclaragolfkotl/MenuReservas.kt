@@ -204,12 +204,10 @@ class MenuReservas : AppCompatActivity() {
                     }
 
                     R.id.menu_logOut -> {
-                        FirebaseAuth.getInstance().signOut()
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        showLogoutConfirmationDialog()
                         true
                     }
+
                     else -> false
                 }
             }
@@ -218,34 +216,30 @@ class MenuReservas : AppCompatActivity() {
         }
     }
 
-    private fun sendPasswordReset (email:String){
-        val currentUser = firebaseAuth.currentUser
-
-        if (currentUser != null && currentUser.email != null) {
-            val userEmail = currentUser.email
-
-            userEmail?.let {
-                firebaseAuth.sendPasswordResetEmail(it).addOnCompleteListener(){ task ->
-
-                    if(task.isSuccessful){
-
-                        Toast.makeText(this, "Correo de Cambio de contraseña, enviado correctamente.", Toast.LENGTH_SHORT).show()
-
-                    } else {
-                        Toast.makeText(this, "Erro al cambiar la contraseña.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-
-
-    }
-
     private fun restartApp() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()
     }
+
+    private fun showLogoutConfirmationDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Cerrar sesión")
+        dialogBuilder.setMessage("¿Estás seguro de que deseas cerrar sesión?")
+        dialogBuilder.setPositiveButton("Sí") { dialog, _ ->
+            // Cerrar sesión y redirigir a la pantalla de inicio de sesión
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
 
 }

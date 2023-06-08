@@ -1,6 +1,7 @@
 package com.example.santaclaragolfkotl
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.*
@@ -21,6 +22,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.collections.HashMap
 
 class ReservasCampo: AppCompatActivity() {
 
@@ -63,6 +65,10 @@ class ReservasCampo: AppCompatActivity() {
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
+
+        val currentDate = Date()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val formattedDate = dateFormat.format(currentDate)
 
         textViewName = findViewById<TextView>(R.id.textViewName)
         textViewPhone = findViewById<TextView>(R.id.textViewPhone)
@@ -145,12 +151,14 @@ class ReservasCampo: AppCompatActivity() {
             val reserva = hashMapOf("nombre" to username,"telefono" to userPhone ,"fecha" to textViewDate?.text.toString(),"hora" to textViewTime?.text.toString(),
                 "pack de la reserva" to packsDropdown?.text.toString(),"acompañantes" to guestsDropdown?.text.toString())
 
+            val reservaGeneral = hashMapOf("nombre" to username, "telefono" to userPhone, "tipo reserva" to "campo","fecha" to formattedDate)
+
             db.collection("reservasCampo").add(reserva).addOnSuccessListener {documentReference ->
 
                 // La reserva se ha insertado con éxito
                 val reservaId = documentReference.id
 
-                showReservationSuccessDialog()
+                showReservationSuccessDialog(reservaGeneral)
             }
                 .addOnFailureListener { e ->
                     // Ocurrió un error al insertar la reserva
@@ -285,12 +293,26 @@ class ReservasCampo: AppCompatActivity() {
     }
 
 
-    private fun showReservationSuccessDialog() {
+    private fun showReservationSuccessDialog(reservaGeneral: HashMap<String, String?>) {
         val dialog = AlertDialog.Builder(this)
             .setTitle("Reserva completada")
             .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
             .setPositiveButton("Aceptar") { _, _ ->
-                // Aquí puedes realizar alguna acción al hacer clic en el botón Aceptar, como redirigir al menú de la aplicación
+                db.collection("reservasGeneral").add(reservaGeneral).addOnSuccessListener { documentReference ->
+
+                    // La reserva se ha insertado con éxito
+                    val reservaId = documentReference.id
+
+                    // Redirigir al menú de las reservas
+                    val intent = Intent(this, MenuReservas::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                    .addOnFailureListener { e ->
+                        // Ocurrió un error al insertar la reserva
+                        Toast.makeText(this, "Error al crear la reserva General: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .create()
 

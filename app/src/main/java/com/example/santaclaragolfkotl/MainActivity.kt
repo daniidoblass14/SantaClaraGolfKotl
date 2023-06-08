@@ -55,29 +55,29 @@ class MainActivity : AppCompatActivity() {
             val dialogBuilder = AlertDialog.Builder(this)
             val input = EditText(this)
 
-            dialogBuilder.setTitle("Ingrese su correo electrónico")
+            dialogBuilder.setTitle(getString(R.string.introduce_email))
             dialogBuilder.setView(input)
-            dialogBuilder.setPositiveButton("Enviar", DialogInterface.OnClickListener { dialog, which ->
+            dialogBuilder.setPositiveButton(getString(R.string.send), DialogInterface.OnClickListener { dialog, which ->
                 val email = input.text.toString().trim()
-
+                val message = getString(R.string.email_sent_to) + " " + email + " " + getString(R.string.to_reset_password)
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         val resultDialogBuilder = AlertDialog.Builder(this)
 
                         if (task.isSuccessful) {
-                            resultDialogBuilder.setTitle("Correo electrónico enviado")
-                            resultDialogBuilder.setMessage("Se ha enviado un correo electrónico a $email para restablecer la contraseña.")
+                            resultDialogBuilder.setTitle(getString(R.string.email_sent))
+                            resultDialogBuilder.setMessage(message)
                         } else {
-                            resultDialogBuilder.setTitle("Error al enviar el correo electrónico")
-                            resultDialogBuilder.setMessage("Hubo un error al enviar el correo electrónico. Verifique la dirección de correo electrónico e inténtelo nuevamente.")
+                            resultDialogBuilder.setTitle(getString(R.string.title_error_sent_email))
+                            resultDialogBuilder.setMessage(getString(R.string.error_verify_email))
                         }
 
-                        resultDialogBuilder.setPositiveButton("Aceptar", null)
+                        resultDialogBuilder.setPositiveButton(getString(R.string.accept), null)
                         val resultDialog = resultDialogBuilder.create()
                         resultDialog.show()
                     }
             })
-            dialogBuilder.setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, which ->
+            dialogBuilder.setNegativeButton(getString(R.string.btn_cancel), DialogInterface.OnClickListener { dialog, which ->
                 dialog.cancel()
             })
 
@@ -95,15 +95,12 @@ class MainActivity : AppCompatActivity() {
             val email = textEmail?.editText?.text.toString()
             val password = textPassword?.editText?.text.toString()
 
-
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
-
                     if (task.isSuccessful) {
                         val user = FirebaseAuth.getInstance().currentUser
-                        val verify = user?.isEmailVerified
 
-                        if (verify == true) {
+                        if (user?.isEmailVerified == true) {
                             insertarUsuario(email)
                             isAdmin(email) { isAdmin ->
                                 if (isAdmin) {
@@ -112,17 +109,16 @@ class MainActivity : AppCompatActivity() {
                                     iniciarSesionUser(email, password)
                                 }
                             }
-                            Toast.makeText(this, "Correo verificado", Toast.LENGTH_SHORT).show()
-
                         } else {
-                            Toast.makeText(this, "El correo no está verificado", Toast.LENGTH_SHORT)
+                            // El correo no está verificado
+                            Toast.makeText(this, getString(R.string.email_no_verify), Toast.LENGTH_SHORT)
                                 .show()
                         }
-
+                    } else {
+                        // Error al iniciar sesión
+                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT).show()
                     }
                 }
-
-
         }
     }
 
@@ -134,10 +130,10 @@ class MainActivity : AppCompatActivity() {
                     val document = result.documents[0]
                     val rol = document.getString("rol")
                     if (rol == "admin") {
-                        Toast.makeText(this, "Eres un administrador", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.be_admin), Toast.LENGTH_SHORT).show()
                         callback(true)
                     } else {
-                        Toast.makeText(this, "No eres un administrador", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.not_be_admin), Toast.LENGTH_SHORT).show()
                         callback(false)
                     }
                 }
@@ -146,11 +142,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun insertarUsuario(email: String) {
-        db.collection("users").whereEqualTo("email", email).get().addOnCompleteListener { task ->
+        db.collection("users").document(email).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val result = task.result
-                if (result != null && !result.isEmpty) {
-                    Toast.makeText(this, "Bienvenido de nuevo, $email", Toast.LENGTH_SHORT).show()
+                if (result != null && result.exists()) {
+                    // El usuario ya existe en la colección "users"
                 } else {
                     db.collection("temporal").document(email).get()
                         .addOnSuccessListener { document ->
@@ -178,19 +174,18 @@ class MainActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     val intentMenuReservas = Intent(this, MenuReservas::class.java)
                     startActivity(intentMenuReservas)
                     finish()
                 } else {
                     val exception = task.exception
                     if (exception is FirebaseAuthInvalidUserException) {
-                        Toast.makeText(this, "El usuario no existe", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT).show()
                     } else if (exception is FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(this, "La contraseña es incorrecta", Toast.LENGTH_SHORT)
+                        Toast.makeText(this, getString(R.string.invalid_password), Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        Toast.makeText(this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -200,19 +195,18 @@ class MainActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     val intentAdminMenu = Intent(this, AdminMenu::class.java)
                     startActivity(intentAdminMenu)
                     finish()
                 } else {
                     val exception = task.exception
                     if (exception is FirebaseAuthInvalidUserException) {
-                        Toast.makeText(this, "El usuario no existe", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT).show()
                     } else if (exception is FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(this, "La contraseña es incorrecta", Toast.LENGTH_SHORT)
+                        Toast.makeText(this, getString(R.string.invalid_password), Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        Toast.makeText(this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
