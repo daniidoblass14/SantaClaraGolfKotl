@@ -64,33 +64,48 @@ class MenuReservas : AppCompatActivity() {
                         val email = user?.email
 
                         if (email != null) {
-                            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        val dialogBuilder = AlertDialog.Builder(this)
-                                        dialogBuilder.setTitle("Atención")
-                                        dialogBuilder.setMessage("Se ha enviado un correo para restablecer la contraseña.\nLa aplicación se reiniciará para aplicar los cambios.")
-                                        dialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
-                                            dialog.dismiss()
-                                            // Reiniciar la aplicación
-                                            val intent = Intent(applicationContext, MainActivity::class.java)
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                            startActivity(intent)
-                                            finish()
-                                        }
+                            val dialogBuilder = AlertDialog.Builder(this)
+                            dialogBuilder.setTitle("Confirmación")
+                            dialogBuilder.setMessage("¿Estás seguro de que deseas cambiar la contraseña?")
+                            dialogBuilder.setPositiveButton("Sí") { dialog, _ ->
+                                dialog.dismiss()
 
-                                        val dialog = dialogBuilder.create()
-                                        dialog.show()
-                                    } else {
-                                        Toast.makeText(this, "Error al enviar el correo de restablecimiento de contraseña", Toast.LENGTH_SHORT).show()
+                                // Enviar correo de restablecimiento de contraseña
+                                FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            val confirmationDialogBuilder = AlertDialog.Builder(this)
+                                            confirmationDialogBuilder.setTitle("Éxito")
+                                            confirmationDialogBuilder.setMessage("Se ha enviado un correo para restablecer la contraseña.\nLa aplicación se reiniciará para aplicar los cambios.")
+                                            confirmationDialogBuilder.setPositiveButton("Aceptar") { confirmationDialog, _ ->
+                                                confirmationDialog.dismiss()
+                                                // Reiniciar la aplicación
+                                                val intent = Intent(applicationContext, MainActivity::class.java)
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                                startActivity(intent)
+                                                finish()
+                                            }
+
+                                            val confirmationDialog = confirmationDialogBuilder.create()
+                                            confirmationDialog.show()
+                                        } else {
+                                            Toast.makeText(this, "Error al enviar el correo de restablecimiento de contraseña", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
-                                }
+                            }
+                            dialogBuilder.setNegativeButton("No") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+
+                            val dialog = dialogBuilder.create()
+                            dialog.show()
                         } else {
                             Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show()
                         }
 
                         true
                     }
+
                     R.id.menu_cambiar_email -> {
                         val dialogBuilder = AlertDialog.Builder(this)
                         dialogBuilder.setTitle("Cambiar email")
