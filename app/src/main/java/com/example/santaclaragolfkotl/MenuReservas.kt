@@ -16,7 +16,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.makeramen.roundedimageview.RoundedImageView
-
+/**
+ * Clase que representa el menú de reservas.
+ */
 class MenuReservas : AppCompatActivity() {
 
     private lateinit var firebaseAuth: FirebaseAuth
@@ -26,6 +28,9 @@ class MenuReservas : AppCompatActivity() {
     private lateinit var btnConfig: ImageButton
     private val db = FirebaseFirestore.getInstance();
 
+    /**
+     * Método de inicialización de la actividad.
+     */
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +70,9 @@ class MenuReservas : AppCompatActivity() {
 
                         if (email != null) {
                             val dialogBuilder = AlertDialog.Builder(this)
-                            dialogBuilder.setTitle("Confirmación")
-                            dialogBuilder.setMessage("¿Estás seguro de que deseas cambiar la contraseña?")
-                            dialogBuilder.setPositiveButton("Sí") { dialog, _ ->
+                            dialogBuilder.setTitle(getString(R.string.change_password_confirmation_title))
+                            dialogBuilder.setMessage(getString(R.string.change_password_confirmation_message))
+                            dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                                 dialog.dismiss()
 
                                 // Enviar correo de restablecimiento de contraseña
@@ -75,9 +80,9 @@ class MenuReservas : AppCompatActivity() {
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             val confirmationDialogBuilder = AlertDialog.Builder(this)
-                                            confirmationDialogBuilder.setTitle("Éxito")
-                                            confirmationDialogBuilder.setMessage("Se ha enviado un correo para restablecer la contraseña.\nLa aplicación se reiniciará para aplicar los cambios.")
-                                            confirmationDialogBuilder.setPositiveButton("Aceptar") { confirmationDialog, _ ->
+                                            confirmationDialogBuilder.setTitle(getString(R.string.change_password_success_title))
+                                            confirmationDialogBuilder.setMessage(getString(R.string.change_password_success_message))
+                                            confirmationDialogBuilder.setPositiveButton(getString(R.string.accept)) { confirmationDialog, _ ->
                                                 confirmationDialog.dismiss()
                                                 // Reiniciar la aplicación
                                                 val intent = Intent(applicationContext, MainActivity::class.java)
@@ -89,18 +94,18 @@ class MenuReservas : AppCompatActivity() {
                                             val confirmationDialog = confirmationDialogBuilder.create()
                                             confirmationDialog.show()
                                         } else {
-                                            Toast.makeText(this, "Error al enviar el correo de restablecimiento de contraseña", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this, getString(R.string.change_password_error_message), Toast.LENGTH_SHORT).show()
                                         }
                                     }
                             }
-                            dialogBuilder.setNegativeButton("No") { dialog, _ ->
+                            dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
                                 dialog.dismiss()
                             }
 
                             val dialog = dialogBuilder.create()
                             dialog.show()
                         } else {
-                            Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.change_email_user_not_found_message), Toast.LENGTH_SHORT).show()
                         }
 
                         true
@@ -108,14 +113,14 @@ class MenuReservas : AppCompatActivity() {
 
                     R.id.menu_cambiar_email -> {
                         val dialogBuilder = AlertDialog.Builder(this)
-                        dialogBuilder.setTitle("Cambiar email")
-                        dialogBuilder.setMessage("Introduce el nuevo correo electrónico")
+                        dialogBuilder.setTitle(getString(R.string.change_email_title))
+                        dialogBuilder.setMessage(getString(R.string.change_email_dialog_message))
 
                         val input = EditText(this)
                         input.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
                         dialogBuilder.setView(input)
 
-                        dialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+                        dialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
                             val newEmail = input.text.toString()
 
                             val user = FirebaseAuth.getInstance().currentUser
@@ -154,41 +159,39 @@ class MenuReservas : AppCompatActivity() {
                                                                                     for (temporalDocument in temporalQueryTask.result) {
                                                                                         temporalDocument.reference.delete()
                                                                                     }
-                                                                                } else {
-                                                                                    Toast.makeText(this, "Error al eliminar el usuario del documento temporal", Toast.LENGTH_SHORT).show()
                                                                                 }
                                                                             }
 
-                                                                            Toast.makeText(this, "Se ha actualizado el correo electrónico. Se ha enviado un correo de verificación.", Toast.LENGTH_SHORT).show()
+                                                                            Toast.makeText(this, getString(R.string.change_email_success_message), Toast.LENGTH_SHORT).show()
                                                                             dialog.dismiss()
                                                                             restartApp()
                                                                         } else {
-                                                                            Toast.makeText(this, "Se ha actualizado el correo electrónico, pero no se pudo enviar el correo de verificación.", Toast.LENGTH_SHORT).show()
+                                                                            Toast.makeText(this, getString(R.string.change_email_verification_error_message), Toast.LENGTH_SHORT).show()
                                                                             dialog.dismiss()
                                                                             restartApp()
                                                                         }
                                                                     }
                                                             } else {
-                                                                Toast.makeText(this, "Error al actualizar el correo electrónico", Toast.LENGTH_SHORT).show()
+                                                                Toast.makeText(this, getString(R.string.change_email_update_error_message), Toast.LENGTH_SHORT).show()
                                                             }
                                                         }
                                                 }
                                                 .addOnFailureListener { exception ->
-                                                    Toast.makeText(this, "Error al crear el nuevo usuario", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(this, getString(R.string.change_email_new_user_error_message), Toast.LENGTH_SHORT).show()
                                                     dialog.dismiss()
                                                 }
                                         }
                                     } else {
-                                        Toast.makeText(this, "Error al buscar el usuario anterior", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this,  getString(R.string.change_email_previous_user_error_message), Toast.LENGTH_SHORT).show()
                                         dialog.dismiss()
                                     }
                                 }
                             } else {
-                                Toast.makeText(this, "Usuario no válido. Inicia sesión nuevamente.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, getString(R.string.change_email_previous_user_error_message), Toast.LENGTH_SHORT).show()
                             }
                         }
 
-                        dialogBuilder.setNegativeButton("Cancelar") { dialog, _ ->
+                        dialogBuilder.setNegativeButton(getString(R.string.btn_cancel)) { dialog, _ ->
                             dialog.cancel()
                         }
 
@@ -202,14 +205,14 @@ class MenuReservas : AppCompatActivity() {
                     R.id.menu_informacion -> {
                         // Acción cuando se selecciona "Información"
                         // Acción cuando se selecciona "Información"
-                        val phoneNumber = "652 68 70 23" // Número de teléfono
-                        val appVersion = "1.0.0" // Versión de la aplicación
-                        val creator = "Daniel Jesús Doblas Florido" // Creador de la aplicación
+                        val phoneNumber = getString(R.string.phone_creator) // Número de teléfono
+                        val appVersion = getString(R.string.version)// Versión de la aplicación
+                        val creator = getString(R.string.name_creator) // Creador de la aplicación
 
                         val dialogBuilder = AlertDialog.Builder(this)
-                        dialogBuilder.setTitle("Información")
+                        dialogBuilder.setTitle(getString(R.string.information_dialog_title))
                         dialogBuilder.setMessage("Teléfono: $phoneNumber\nVersión: $appVersion\nCreador: $creator")
-                        dialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+                        dialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
                             dialog.dismiss()
                         }
 
@@ -230,26 +233,30 @@ class MenuReservas : AppCompatActivity() {
             popupMenu.show()
         }
     }
-
+    /**
+     * Reinicia la aplicación.
+     */
     private fun restartApp() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()
     }
-
+    /**
+     * Muestra el cuadro de diálogo de confirmación para cerrar sesión.
+     */
     private fun showLogoutConfirmationDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Cerrar sesión")
-        dialogBuilder.setMessage("¿Estás seguro de que deseas cerrar sesión?")
-        dialogBuilder.setPositiveButton("Sí") { dialog, _ ->
+        dialogBuilder.setTitle(getString(R.string.menu_logout))
+        dialogBuilder.setMessage(getString(R.string.logout_confirmation_message))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
             // Cerrar sesión y redirigir a la pantalla de inicio de sesión
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
-        dialogBuilder.setNegativeButton("No") { dialog, _ ->
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
             dialog.dismiss()
         }
         val dialog = dialogBuilder.create()

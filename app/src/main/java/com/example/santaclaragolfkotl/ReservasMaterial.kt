@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isEmpty
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -16,13 +17,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class ReservasMaterial: AppCompatActivity() {
+class ReservasMaterial : AppCompatActivity() {
 
-    private var palosDropdown : AutoCompleteTextView? = null
-    private var guantesDropdown : AutoCompleteTextView? = null
-    private var pelotasDropdown : AutoCompleteTextView? = null
-    private var calzadoDropdown : AutoCompleteTextView? = null
-    private var arreglaPiquesDropdown : AutoCompleteTextView? = null
+    private var palosDropdown: AutoCompleteTextView? = null
+    private var guantesDropdown: AutoCompleteTextView? = null
+    private var pelotasDropdown: AutoCompleteTextView? = null
+    private var calzadoDropdown: AutoCompleteTextView? = null
+    private var arreglaPiquesDropdown: AutoCompleteTextView? = null
     private val db = FirebaseFirestore.getInstance();
     private var palosDatos = mutableListOf<String>()
     private var pelotasDatos = mutableListOf<String>()
@@ -68,7 +69,8 @@ class ReservasMaterial: AppCompatActivity() {
         textInputLayoutGuantes = findViewById<TextInputLayout>(R.id.textInputLayoutGuantes)
         textInputLayoutPelotas = findViewById<TextInputLayout>(R.id.textInputLayoutPelotas)
         textInputLayoutCalzados = findViewById<TextInputLayout>(R.id.textInputLayoutCalzados)
-        textInputLayoutArreglapiques = findViewById<TextInputLayout>(R.id.textInputLayoutArreglapiques)
+        textInputLayoutArreglapiques =
+            findViewById<TextInputLayout>(R.id.textInputLayoutArreglapiques)
 
         textViewName = findViewById<TextView>(R.id.textViewName)
         textViewPhone = findViewById<TextView>(R.id.textViewPhone)
@@ -83,7 +85,8 @@ class ReservasMaterial: AppCompatActivity() {
         guantesDropdown = findViewById<AutoCompleteTextView>(R.id.guantesFilledExposedDropdown)
         pelotasDropdown = findViewById<AutoCompleteTextView>(R.id.pelotasFilledExposedDropdown)
         calzadoDropdown = findViewById<AutoCompleteTextView>(R.id.calzadoFilledExposedDropdown)
-        arreglaPiquesDropdown = findViewById<AutoCompleteTextView>(R.id.arreglaPiquesFilledExposedDropdown)
+        arreglaPiquesDropdown =
+            findViewById<AutoCompleteTextView>(R.id.arreglaPiquesFilledExposedDropdown)
 
         cardView = findViewById<CardView>(R.id.cardView)
 
@@ -162,23 +165,56 @@ class ReservasMaterial: AppCompatActivity() {
 
         btnConfirm?.setOnClickListener {
 
-            val reserva = hashMapOf("nombre" to username,"telefono" to userPhone ,"palos" to palosDropdown?.text.toString(),"guantes" to guantesDropdown?.text.toString(),
-                "calzado" to calzadoDropdown?.text.toString(),"pelotas" to pelotasDropdown?.text.toString(),"Arreglapiques" to arreglaPiquesDropdown?.text.toString())
+            val reserva = hashMapOf(
+                "nombre" to username,
+                "telefono" to userPhone,
+                "palos" to palosDropdown?.text.toString(),
+                "guantes" to guantesDropdown?.text.toString(),
+                "calzado" to calzadoDropdown?.text.toString(),
+                "pelotas" to pelotasDropdown?.text.toString(),
+                "Arreglapiques" to arreglaPiquesDropdown?.text.toString()
+            )
 
-            val reservaGeneral = hashMapOf("nombre" to username, "telefono" to userPhone, "tipo reserva" to "material","fecha" to formattedDate)
+            val reservaGeneral = hashMapOf(
+                "nombre" to username,
+                "telefono" to userPhone,
+                "tipo reserva" to "material",
+                "fecha" to formattedDate
+            )
 
-            db.collection("reservasMaterial").add(reserva).addOnSuccessListener {documentReference ->
+            val guantesText = textInputLayoutGuantes?.editText?.text.toString()
+            val palosText = textInputLayoutPalos?.editText?.text.toString()
+            val arreglapiquesText = textInputLayoutArreglapiques?.editText?.text.toString()
+            val pelotasText = textInputLayoutPelotas?.editText?.text.toString()
+            val calzadosText = textInputLayoutCalzados?.editText?.text.toString()
 
-                // La reserva se ha insertado con éxito
-                val reservaId = documentReference.id
+            if (guantesText.isEmpty() && palosText.isEmpty() && arreglapiquesText.isEmpty() && pelotasText.isEmpty() && calzadosText.isEmpty()) {
+                Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+            } else {
+                val reserva = hashMapOf(
+                    "nombre" to username,
+                    "telefono" to userPhone,
+                    "palos" to palosText,
+                    "guantes" to guantesText,
+                    "calzado" to calzadosText,
+                    "pelotas" to pelotasText,
+                    "Arreglapiques" to arreglapiquesText
+                )
 
-                showReservationSuccessDialog(reservaGeneral)
+                db.collection("reservasMaterial").add(reserva)
+                    .addOnSuccessListener { documentReference ->
+                        // La reserva se ha insertado con éxito
+                        val reservaId = documentReference.id
+                        showReservationSuccessDialog(reservaGeneral)
+                    }
+                    .addOnFailureListener { e ->
+                        // Ocurrió un error al insertar la reserva
+                        Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
-                .addOnFailureListener { e ->
-                    // Ocurrió un error al insertar la reserva
-                    Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
+
         }
+
 
     }
 
@@ -197,7 +233,8 @@ class ReservasMaterial: AppCompatActivity() {
                     palosDatos.add(nombre!!)
                 }
                 val palosArray = palosDatos.toTypedArray()
-                val adapterPalos = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, palosArray)
+                val adapterPalos =
+                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, palosArray)
                 palosDropdown?.setAdapter(adapterPalos)
             } else {
                 // Maneja el error en caso de que la consulta falle
@@ -220,7 +257,8 @@ class ReservasMaterial: AppCompatActivity() {
                     pelotasDatos.add(nombre!!)
                 }
                 val pelotasArray = pelotasDatos.toTypedArray()
-                val adapterPelotas = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, pelotasArray)
+                val adapterPelotas =
+                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, pelotasArray)
                 pelotasDropdown?.setAdapter(adapterPelotas)
             } else {
                 // Maneja el error en caso de que la consulta falle
@@ -243,7 +281,8 @@ class ReservasMaterial: AppCompatActivity() {
                     guantesDatos.add(nombre!!)
                 }
                 val guantesArray = guantesDatos.toTypedArray()
-                val adapterGuantes = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, guantesArray)
+                val adapterGuantes =
+                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, guantesArray)
                 guantesDropdown?.setAdapter(adapterGuantes)
             } else {
                 // Maneja el error en caso de que la consulta falle
@@ -266,7 +305,8 @@ class ReservasMaterial: AppCompatActivity() {
                     calzadosDatos.add(nombre!!)
                 }
                 val calzadosArray = calzadosDatos.toTypedArray()
-                val adapterCalzados = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, calzadosArray)
+                val adapterCalzados =
+                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, calzadosArray)
                 calzadoDropdown?.setAdapter(adapterCalzados)
             } else {
                 // Maneja el error en caso de que la consulta falle
@@ -289,7 +329,8 @@ class ReservasMaterial: AppCompatActivity() {
                     arreglaPiquesDatos.add(nombre!!)
                 }
                 val arreglaArray = arreglaPiquesDatos.toTypedArray()
-                val adapterArregla = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, arreglaArray)
+                val adapterArregla =
+                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, arreglaArray)
                 arreglaPiquesDropdown?.setAdapter(adapterArregla)
             } else {
                 // Maneja el error en caso de que la consulta falle
@@ -306,20 +347,25 @@ class ReservasMaterial: AppCompatActivity() {
             .setTitle("Reserva completada")
             .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
             .setPositiveButton("Aceptar") { _, _ ->
-                db.collection("reservasGeneral").add(reservaGeneral).addOnSuccessListener { documentReference ->
+                db.collection("reservasGeneral").add(reservaGeneral)
+                    .addOnSuccessListener { documentReference ->
 
-                    // La reserva se ha insertado con éxito
-                    val reservaId = documentReference.id
+                        // La reserva se ha insertado con éxito
+                        val reservaId = documentReference.id
 
-                    // Redirigir al menú de las reservas
-                    val intent = Intent(this, MenuReservas::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
-                }
+                        // Redirigir al menú de las reservas
+                        val intent = Intent(this, MenuReservas::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    }
                     .addOnFailureListener { e ->
                         // Ocurrió un error al insertar la reserva
-                        Toast.makeText(this, "Error al crear la reserva General: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Error al crear la reserva General: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
             }
             .create()

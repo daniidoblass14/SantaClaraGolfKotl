@@ -17,6 +17,7 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.FirebaseApp
@@ -54,11 +55,15 @@ class ReservasRestaurante : AppCompatActivity() {
     private var textViewDate: TextView? = null
     private var textViewTime: TextView? = null
     private var textViewGuests: TextView? = null
+    private var textInputGuests: TextInputLayout? = null
 
     private val db = FirebaseFirestore.getInstance();
     private var username: String? = null
     private var userPhone: String? = null
 
+    private val currentDate = Date()
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+    private val formattedDate = dateFormat.format(currentDate)
 
 
     @SuppressLint("MissingInflatedId")
@@ -71,15 +76,12 @@ class ReservasRestaurante : AppCompatActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
 
-        val currentDate = Date()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-        val formattedDate = dateFormat.format(currentDate)
-
         textViewName = findViewById<TextView>(R.id.textViewName)
         textViewPhone = findViewById<TextView>(R.id.textViewPhone)
         textViewDate = findViewById<TextView>(R.id.textViewDate)
         textViewTime = findViewById<TextView>(R.id.textViewTime)
         textViewGuests = findViewById<TextView>(R.id.textViewGuests)
+        textInputGuests = findViewById<TextInputLayout>(R.id.textInputLayoutGuests)
 
         cardView = findViewById<CardView>(R.id.cardView)
 
@@ -181,18 +183,24 @@ class ReservasRestaurante : AppCompatActivity() {
             "acompañantes" to textViewGuests?.text.toString())
 
             val reservaGeneral = hashMapOf("nombre" to username, "telefono" to userPhone, "tipo reserva" to "restaurante","fecha" to formattedDate)
+            val textInputGuests = textInputGuests?.editText?.text.toString()
 
-            db.collection("reservasRestaurante").add(reserva).addOnSuccessListener {documentReference ->
+            if(textInputGuests.isEmpty()){
+                Toast.makeText(this, "Por favor, diga los acompañantes", Toast.LENGTH_SHORT).show()
+            } else {
+                db.collection("reservasRestaurante").add(reserva).addOnSuccessListener {documentReference ->
 
-                // La reserva se ha insertado con éxito
-                val reservaId = documentReference.id
+                    // La reserva se ha insertado con éxito
+                    val reservaId = documentReference.id
 
-                showReservationSuccessDialog(reservaGeneral)
-            }
-                .addOnFailureListener { e ->
-                    // Ocurrió un error al insertar la reserva
-                    Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                    showReservationSuccessDialog(reservaGeneral)
                 }
+                    .addOnFailureListener { e ->
+                        // Ocurrió un error al insertar la reserva
+                        Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
         }
     }
 
@@ -225,6 +233,7 @@ class ReservasRestaurante : AppCompatActivity() {
     }
 
     private fun setTimePickerListener() {
+
         textFieldHour?.setOnClickListener {
             timePicker.show(supportFragmentManager, "TimePicker")
         }
@@ -235,23 +244,50 @@ class ReservasRestaurante : AppCompatActivity() {
 
             if (isTimeInRange(selectedHour, selectedMinute)) {
                 val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                textFieldHour?.setText(formattedTime)
+
+                if (textFieldDay?.text.toString() == formattedDate) {
+                    val currentTime = Calendar.getInstance()
+                    val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+                    val currentMinute = currentTime.get(Calendar.MINUTE)
+
+                    if (selectedHour > currentHour || (selectedHour == currentHour && selectedMinute > currentMinute)) {
+                        textFieldHour?.setText(formattedTime)
+                    } else {
+                        showInvalidTimeDialog()
+                        textFieldHour?.text?.clear()
+                    }
+                } else {
+                    textFieldHour?.setText(formattedTime)
+                }
             } else {
                 showOutOfRangeDialog()
                 textFieldHour?.text?.clear()
             }
         }
+
     }
+
+    private fun showInvalidTimeDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Invalid Time")
+            .setMessage("Please select a time after the current time.")
+            .setPositiveButton("OK", null)
+            .create()
+
+        dialog.show()
+    }
+
 
     private fun isTimeInRange(hour: Int, minute: Int): Boolean {
         val selectedTime = hour * 100 + minute
 
-        return (selectedTime in 800..1600) || (selectedTime in 2000..2359) || (selectedTime in 0..59)
+        return (selectedTime in 1000..1600) || (selectedTime in 2000..100) || (selectedTime in 2000..2359) || (selectedTime in 0..100)
     }
+
 
     private fun showOutOfRangeDialog() {
         val dialog = AlertDialog.Builder(this).setTitle("Invalid Time")
-            .setMessage("Please select a time between 8:00 and 16:00 or between 20:00 and 00:00.")
+            .setMessage("Please select a time between 10:00 and 16:00 or between 20:00 and 01:00.")
             .setPositiveButton("OK", null).create()
 
         dialog.show()
@@ -290,31 +326,6 @@ class ReservasRestaurante : AppCompatActivity() {
                 SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time)
             textFieldDay?.setText(formattedDate)
         }
-    }
-
-    private fun sendConfirmationEmail(reservaId: String) {
-        val cloudFunctionUrl = "CLOUD_FUNCTION_URL"
-        val url = "$cloudFunctionUrl/sendConfirmationEmail?reservaId=$reservaId"
-
-        val request = Request.Builder().url(url).build()
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Error al llamar a la función de Firebase Cloud Functions
-                e.printStackTrace()
-                runOnUiThread {
-                    Toast.makeText(this@ReservasRestaurante, "Error al enviar el correo electrónico", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                // La función de Firebase Cloud Functions se llamó correctamente
-                // Puedes agregar aquí cualquier lógica adicional si es necesario
-                runOnUiThread {
-                    Toast.makeText(this@ReservasRestaurante, "Correo electrónico enviado correctamente", Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
     }
 
 

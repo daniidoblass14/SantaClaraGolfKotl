@@ -58,6 +58,13 @@ class ReservasCampo: AppCompatActivity() {
     private var textViewPack: TextView? = null
     private var textViewGuests: TextView? = null
 
+    private var textInputPacks: TextInputLayout? = null
+    private var textInputGuests: TextInputLayout? = null
+
+    private val currentDate = Date()
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+    private val formattedDate = dateFormat.format(currentDate)
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,16 +73,15 @@ class ReservasCampo: AppCompatActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
 
-        val currentDate = Date()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-        val formattedDate = dateFormat.format(currentDate)
-
         textViewName = findViewById<TextView>(R.id.textViewName)
         textViewPhone = findViewById<TextView>(R.id.textViewPhone)
         textViewDate = findViewById<TextView>(R.id.textViewDate)
         textViewTime = findViewById<TextView>(R.id.textViewTime)
         textViewGuests = findViewById<TextView>(R.id.textViewGuests)
         textViewPack = findViewById<TextView>(R.id.textViewPack)
+
+        textInputGuests = findViewById<TextInputLayout>(R.id.textInputLayoutGuests)
+        textInputPacks = findViewById<TextInputLayout>(R.id.textInputLayoutPacks)
 
         btnConfirm = findViewById<Button>(R.id.btnConfirm)
         btnCancel = findViewById<Button>(R.id.btnCancel)
@@ -152,18 +158,25 @@ class ReservasCampo: AppCompatActivity() {
                 "pack de la reserva" to packsDropdown?.text.toString(),"acompañantes" to guestsDropdown?.text.toString())
 
             val reservaGeneral = hashMapOf("nombre" to username, "telefono" to userPhone, "tipo reserva" to "campo","fecha" to formattedDate)
+            val textInputGuests = textInputGuests?.editText?.text.toString()
+            val textInputPacks = textInputPacks?.editText?.text.toString()
 
-            db.collection("reservasCampo").add(reserva).addOnSuccessListener {documentReference ->
+            if(textInputPacks.isEmpty() && textInputGuests.isEmpty()){
+                Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+            } else {
+                db.collection("reservasCampo").add(reserva).addOnSuccessListener {documentReference ->
 
-                // La reserva se ha insertado con éxito
-                val reservaId = documentReference.id
+                    // La reserva se ha insertado con éxito
+                    val reservaId = documentReference.id
 
-                showReservationSuccessDialog(reservaGeneral)
-            }
-                .addOnFailureListener { e ->
-                    // Ocurrió un error al insertar la reserva
-                    Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                    showReservationSuccessDialog(reservaGeneral)
                 }
+                    .addOnFailureListener { e ->
+                        // Ocurrió un error al insertar la reserva
+                        Toast.makeText(this, "Error al crear la reserva: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
 
         }
 
@@ -233,12 +246,36 @@ class ReservasCampo: AppCompatActivity() {
 
             if (isTimeInRange(selectedHour, selectedMinute)) {
                 val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                textFieldHour?.setText(formattedTime)
+
+                if (textFieldDay?.text.toString() == formattedDate) {
+                    val currentTime = Calendar.getInstance()
+                    val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+                    val currentMinute = currentTime.get(Calendar.MINUTE)
+
+                    if (selectedHour > currentHour || (selectedHour == currentHour && selectedMinute > currentMinute)) {
+                        textFieldHour?.setText(formattedTime)
+                    } else {
+                        showInvalidTimeDialog()
+                        textFieldHour?.text?.clear()
+                    }
+                } else {
+                    textFieldHour?.setText(formattedTime)
+                }
             } else {
                 showOutOfRangeDialog()
                 textFieldHour?.text?.clear()
             }
         }
+    }
+
+    private fun showInvalidTimeDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Invalid Time")
+            .setMessage("Please select a time after the current time.")
+            .setPositiveButton("OK", null)
+            .create()
+
+        dialog.show()
     }
 
     private fun isTimeInRange(hour: Int, minute: Int): Boolean {

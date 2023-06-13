@@ -12,6 +12,9 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * Actividad para registrar un nuevo usuario.
+ */
 class Registrar : AppCompatActivity() {
 
     private var btnConfirmar: Button? = null
@@ -22,7 +25,7 @@ class Registrar : AppCompatActivity() {
     private var textPassword: TextInputLayout? = null
     private var textRepeatPassword: TextInputLayout? = null
 
-    private val db = FirebaseFirestore.getInstance();
+    private val db = FirebaseFirestore.getInstance()
     private var user = FirebaseAuth.getInstance().currentUser
 
     @SuppressLint("MissingInflatedId")
@@ -41,8 +44,10 @@ class Registrar : AppCompatActivity() {
         setUp()
     }
 
+    /**
+     * Configura la actividad y los botones.
+     */
     private fun setUp() {
-        title = "Registro de Usuario"
         FirebaseApp.initializeApp(this)
 
         btnConfirmar!!.setOnClickListener {
@@ -54,30 +59,57 @@ class Registrar : AppCompatActivity() {
             val password = textPassword?.editText?.text.toString()
             val repeatPassword = textRepeatPassword?.editText?.text.toString()
 
-            if (password.equals(repeatPassword)) {
+            if (password.length < 6) {
+                Toast.makeText(this, getString(R.string.password_long), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                        task ->
-                    if (task.isSuccessful) {
+            if (password == repeatPassword) {
 
-                        user = FirebaseAuth.getInstance().currentUser
-                        user?.sendEmailVerification()
+                // Verificar si el email ya está registrado
+                db.collection("users").whereEqualTo("email", email).get().addOnCompleteListener { task ->
+                    if (task.isSuccessful && !task.result.isEmpty) {
+                        // El email ya está registrado
+                        Toast.makeText(this, getString(R.string.email_register), Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Verificar si el número de teléfono ya está registrado
+                        db.collection("users").whereEqualTo("telefono", telefono).get().addOnCompleteListener { task ->
+                            if (task.isSuccessful && !task.result.isEmpty) {
+                                // El número de teléfono ya está registrado
+                                Toast.makeText(this, getString(R.string.phone_regiter), Toast.LENGTH_SHORT).show()
+                            } else {
+                                // Registrar el nuevo usuario
+                                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
 
-                        db.collection("temporal").document(email).set(hashMapOf("nombre" to nombre,"apellido" to apellido,
-                            "telefono" to telefono, "email" to email,"rol" to "user"))
+                                        user = FirebaseAuth.getInstance().currentUser
+                                        user?.sendEmailVerification()
 
-                        finish()
-                        val intentLogin = Intent(this, MainActivity::class.java)
-                        startActivity(intentLogin)
-                    }
-                    else{
+                                        db.collection("temporal").document(email).set(
+                                            hashMapOf(
+                                                "nombre" to nombre,
+                                                "apellido" to apellido,
+                                                "telefono" to telefono,
+                                                "email" to email,
+                                                "rol" to "user"
+                                            )
+                                        )
 
+                                        finish()
+                                        val intentLogin = Intent(this, MainActivity::class.java)
+                                        startActivity(intentLogin)
+                                    } else {
+                                        // Error al crear el usuario
+                                        Toast.makeText(this, getString(R.string.error_user), Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             } else {
-                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.password_notEqual), Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 }

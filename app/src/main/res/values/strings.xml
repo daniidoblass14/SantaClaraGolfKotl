@@ -49,5 +49,54 @@
     <string name="send">Enviar</string>
     <string name="invalid_user">Usuario no valido</string>
     <string name="invalid_password">Contraseña no valida</string>
+    <string name="out">Salir</string>
+    <string name="confirm_exit_message">¿Desea salir de la aplicación?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="password_long">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="email_register">El email ya está registrado</string>
+    <string name="phone_regiter">El número de teléfono ya está registrado</string>
+    <string name="password_notEqual">Las contraseñas no coinciden</string>
+    <string name="error_user">Error al crear el usuario</string>
+
+    <!-- Menú de cambio de contraseña -->
+    <string name="menu_change_password">Cambiar contraseña</string>
+    <string name="change_password_confirmation_title">Confirmación</string>
+    <string name="change_password_confirmation_message">¿Estás seguro de que deseas cambiar la contraseña?</string>
+    <string name="change_password_success_title">Éxito</string>
+    <string name="change_password_success_message">Se ha enviado un correo para restablecer la contraseña.\nLa aplicación se reiniciará para aplicar los cambios.</string>
+    <string name="change_password_error_message">Error al enviar el correo de restablecimiento de contraseña</string>
+
+    <!-- Menú de cambio de correo electrónico -->
+    <string name="menu_change_email">Cambiar correo electrónico</string>
+    <string name="change_email_title">Cambiar correo electrónico</string>
+    <string name="change_email_dialog_message">Introduce el nuevo correo electrónico</string>
+    <string name="change_email_dialog_positive_button">Aceptar</string>
+    <string name="change_email_dialog_negative_button">Cancelar</string>
+    <string name="change_email_success_message">Se ha actualizado el correo electrónico. Se ha enviado un correo de verificación.</string>
+    <string name="change_email_verification_error_message">Se ha actualizado el correo electrónico, pero no se pudo enviar el correo de verificación.</string>
+    <string name="change_email_update_error_message">Error al actualizar el correo electrónico</string>
+    <string name="change_email_user_not_found_message">Usuario no encontrado</string>
+    <string name="change_email_previous_user_error_message">Error al buscar el usuario anterior</string>
+    <string name="change_email_new_user_error_message">Error al crear el nuevo usuario</string>
+    <string name="change_email_invalid_user_message">Usuario no válido. Inicia sesión nuevamente.</string>
+
+    <!-- Menú de información -->
+    <string name="menu_information">Información</string>
+    <string name="information_dialog_title">Información</string>
+    <string name="information_dialog_message">Teléfono: %s\nVersión: %s\nCreador: %s</string>
+    <string name="information_dialog_positive_button">Aceptar</string>
+
+    <!-- Menú de cierre de sesión -->
+    <string name="menu_logout">Cerrar sesión</string>
+    <string name="logout_confirmation_title">Cerrar sesión</string>
+    <string name="logout_confirmation_message">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="logout_confirmation_positive_button">Sí</string>
+    <string name="logout_confirmation_negative_button">No</string>
+
+    <string name="name_creator">Daniel Jesús Doblas Florido</string>
+    <string name="phone_creator">652 68 70 23</string>
+    <string name="version">1.0.0</string>
+
 
 </resources>
