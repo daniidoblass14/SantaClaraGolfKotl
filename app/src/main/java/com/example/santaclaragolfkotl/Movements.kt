@@ -1,11 +1,13 @@
 package com.example.santaclaragolfkotl
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,8 +82,24 @@ class Movements : AppCompatActivity() {
                     }
                 } else {
                     // Ocurrió un error al obtener los datos
-                    Toast.makeText(this, "Error al obtener los datos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_data), Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    override fun onBackPressed() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(getString(R.string.menu_logout))
+        dialogBuilder.setMessage(getString(R.string.logout_confirmation_message))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(this, AdminMenu::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
     }
 }

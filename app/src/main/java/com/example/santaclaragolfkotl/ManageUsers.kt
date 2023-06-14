@@ -50,14 +50,14 @@ class ManageUsers : AppCompatActivity() {
     private fun changeEmail(email: String) {
 
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Cambiar email")
-        dialogBuilder.setMessage("Introduce el nuevo correo electrónico")
+        dialogBuilder.setTitle(getString(R.string.change_email_title))
+        dialogBuilder.setMessage(getString(R.string.change_email_dialog_message))
 
         val input = EditText(this)
         input.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         dialogBuilder.setView(input)
 
-        dialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+        dialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
             val newEmail = input.text.toString()
 
             val user = FirebaseAuth.getInstance().currentUser
@@ -75,11 +75,11 @@ class ManageUsers : AppCompatActivity() {
 
 
             } else {
-                Toast.makeText(this, "Usuario no válido. Inicia sesión nuevamente.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT).show()
             }
         }
 
-        dialogBuilder.setNegativeButton("Cancelar") { dialog, _ ->
+        dialogBuilder.setNegativeButton(getString(R.string.btn_cancel)) { dialog, _ ->
             dialog.cancel()
         }
 
@@ -105,9 +105,9 @@ class ManageUsers : AppCompatActivity() {
 
     private fun showRestartAppDialogChangePassword(previousEmail: String) {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Advertencia")
-        dialogBuilder.setMessage("El correo electronico es el suyo, la app se reiniciará")
-        dialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+        dialogBuilder.setTitle(getString(R.string.alert))
+        dialogBuilder.setMessage(getString(R.string.your_email))
+        dialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
             queryChangePassword(previousEmail)
             dialog.dismiss()
             finish() // Finalizar la actividad actual y volver al menú de administrador
@@ -119,9 +119,9 @@ class ManageUsers : AppCompatActivity() {
 
     private fun showSuccessDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Éxito")
-        dialogBuilder.setMessage("Cambios realizados correctamente.")
-        dialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+        dialogBuilder.setTitle(getString(R.string.change_password_success_title))
+        dialogBuilder.setMessage(getString(R.string.confirm_change))
+        dialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
             dialog.dismiss()
             finish() // Finalizar la actividad actual y volver al menú de administrador
 
@@ -139,9 +139,9 @@ class ManageUsers : AppCompatActivity() {
         user: FirebaseUser
     ) {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Alerta")
-        dialogBuilder.setMessage("El correo electrónico es el mismo.")
-        dialogBuilder.setPositiveButton("Sí") { dialog, _ ->
+        dialogBuilder.setTitle(getString(R.string.alert))
+        dialogBuilder.setMessage(getString(R.string.email_equal))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
             dialog.dismiss()
             queryChangeEmail(dialog1,usersCollection,temporalCollection,newEmail,previousEmail,user)
             restartApp()
@@ -196,31 +196,31 @@ class ManageUsers : AppCompatActivity() {
                                                                 temporalDocument.reference.delete()
                                                             }
                                                         } else {
-                                                            Toast.makeText(this, "Error al eliminar el usuario del documento temporal", Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(this, getString(R.string.error_user_delete_temporal), Toast.LENGTH_SHORT).show()
                                                         }
                                                     }
 
-                                                    Toast.makeText(this, "Se ha actualizado el correo electrónico. Se ha enviado un correo de verificación.", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(this, getString(R.string.change_email_success_message), Toast.LENGTH_SHORT).show()
                                                     dialog.dismiss()
                                                     //restartApp()
                                                 } else {
-                                                    Toast.makeText(this, "Se ha actualizado el correo electrónico, pero no se pudo enviar el correo de verificación.", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(this,  getString(R.string.error_update_email_not_send_email), Toast.LENGTH_SHORT).show()
                                                     dialog.dismiss()
                                                     //restartApp()
                                                 }
                                             }
                                     } else {
-                                        Toast.makeText(this, "Error al actualizar el correo electrónico", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this, getString(R.string.change_email_update_error_message), Toast.LENGTH_SHORT).show()
                                     }
                                 }
                         }
                         .addOnFailureListener { exception ->
-                            Toast.makeText(this, "Error al crear el nuevo usuario", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.error_user_create), Toast.LENGTH_SHORT).show()
                             dialog.dismiss()
                         }
                 }
             } else {
-                Toast.makeText(this, "Error al buscar el usuario anterior", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,  getString(R.string.error_user_01), Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
         }
@@ -229,11 +229,27 @@ class ManageUsers : AppCompatActivity() {
     private fun queryChangePassword(previousEmail: String) {
         firebaseAuth.sendPasswordResetEmail(previousEmail).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(this, "Correo de Cambio de contraseña, enviado correctamente.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.email_change_password), Toast.LENGTH_SHORT).show()
                 showSuccessDialog()
             } else {
-                Toast.makeText(this, "Error al cambiar la contraseña.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_change_password), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(getString(R.string.menu_logout))
+        dialogBuilder.setMessage(getString(R.string.logout_confirmation_message))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(this, AdminMenu::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
     }
 }

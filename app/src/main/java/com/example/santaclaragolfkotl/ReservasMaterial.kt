@@ -189,7 +189,7 @@ class ReservasMaterial : AppCompatActivity() {
             val calzadosText = textInputLayoutCalzados?.editText?.text.toString()
 
             if (guantesText.isEmpty() && palosText.isEmpty() && arreglapiquesText.isEmpty() && pelotasText.isEmpty() && calzadosText.isEmpty()) {
-                Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.all_data), Toast.LENGTH_SHORT).show()
             } else {
                 val reserva = hashMapOf(
                     "nombre" to username,
@@ -344,9 +344,9 @@ class ReservasMaterial : AppCompatActivity() {
 
     private fun showReservationSuccessDialog(reservaGeneral: HashMap<String, String?>) {
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Reserva completada")
-            .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
-            .setPositiveButton("Aceptar") { _, _ ->
+            .setTitle(getString(R.string.reservation_complete))
+            .setMessage(getString(R.string.reservation_complete_message))
+            .setPositiveButton(getString(R.string.accept)) { _, _ ->
                 db.collection("reservasGeneral").add(reservaGeneral)
                     .addOnSuccessListener { documentReference ->
 
@@ -373,5 +373,19 @@ class ReservasMaterial : AppCompatActivity() {
         dialog.show()
     }
 
-
+    override fun onBackPressed() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(getString(R.string.back))
+        dialogBuilder.setMessage(getString(R.string.back_reservation))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(this, MenuReservas::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
 }

@@ -56,7 +56,8 @@ class MainActivity : AppCompatActivity() {
             dialogBuilder.setView(input)
             dialogBuilder.setPositiveButton(getString(R.string.send)) { dialog, which ->
                 val email = input.text.toString().trim()
-                val message = getString(R.string.email_sent_to) + " " + email + " " + getString(R.string.to_reset_password)
+                val message =
+                    getString(R.string.email_sent_to) + " " + email + " " + getString(R.string.to_reset_password)
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         val resultDialogBuilder = AlertDialog.Builder(this)
@@ -84,6 +85,7 @@ class MainActivity : AppCompatActivity() {
 
         setUp()
     }
+
     /**
      * Configura la funcionalidad de inicio de sesión.
      */
@@ -98,6 +100,11 @@ class MainActivity : AppCompatActivity() {
                         val user = FirebaseAuth.getInstance().currentUser
 
                         if (user?.isEmailVerified == true) {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.email_verify),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             insertarUsuario(email)
                             isAdmin(email) { isAdmin ->
                                 if (isAdmin) {
@@ -108,15 +115,21 @@ class MainActivity : AppCompatActivity() {
                             }
                         } else {
                             // El correo no está verificado
-                            Toast.makeText(this, getString(R.string.email_no_verify), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                getString(R.string.email_no_verify),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
                         // Error al iniciar sesión
-                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
         }
     }
+
     /**
      * Verifica si un usuario es administrador o no.
      * @param email el correo electrónico del usuario
@@ -130,16 +143,19 @@ class MainActivity : AppCompatActivity() {
                     val document = result.documents[0]
                     val rol = document.getString("rol")
                     if (rol == "admin") {
-                        Toast.makeText(this, getString(R.string.be_admin), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.be_admin), Toast.LENGTH_SHORT)
+                            .show()
                         callback(true)
                     } else {
-                        Toast.makeText(this, getString(R.string.not_be_admin), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.not_be_admin), Toast.LENGTH_SHORT)
+                            .show()
                         callback(false)
                     }
                 }
             }
         }
     }
+
     /**
      * Inserta un usuario en la colección "users" si no existe.
      * @param email el correo electrónico del usuario
@@ -172,6 +188,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     /**
      * Inicia sesión como usuario normal.
      * @param email el correo electrónico del usuario
@@ -187,15 +204,22 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     val exception = task.exception
                     if (exception is FirebaseAuthInvalidUserException) {
-                        Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT)
+                            .show()
                     } else if (exception is FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(this, getString(R.string.invalid_password), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.invalid_password),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
     }
+
     /**
      * Inicia sesión como administrador.
      * @param email el correo electrónico del administrador
@@ -211,11 +235,17 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     val exception = task.exception
                     if (exception is FirebaseAuthInvalidUserException) {
-                        Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.invalid_user), Toast.LENGTH_SHORT)
+                            .show()
                     } else if (exception is FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(this, getString(R.string.invalid_password), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.invalid_password),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.init_error), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }

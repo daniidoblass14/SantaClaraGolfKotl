@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseApp
@@ -64,6 +65,11 @@ class Registrar : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (telefono.length != 9) {
+                Toast.makeText(this, getString(R.string.phone_length), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (password == repeatPassword) {
 
                 // Verificar si el email ya está registrado
@@ -111,5 +117,21 @@ class Registrar : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.password_notEqual), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(getString(R.string.back))
+        dialogBuilder.setMessage(getString(R.string.register_back))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
     }
 }

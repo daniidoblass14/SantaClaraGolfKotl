@@ -162,7 +162,7 @@ class ReservasCampo: AppCompatActivity() {
             val textInputPacks = textInputPacks?.editText?.text.toString()
 
             if(textInputPacks.isEmpty() && textInputGuests.isEmpty()){
-                Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.all_data), Toast.LENGTH_SHORT).show()
             } else {
                 db.collection("reservasCampo").add(reserva).addOnSuccessListener {documentReference ->
 
@@ -231,7 +231,7 @@ class ReservasCampo: AppCompatActivity() {
             .setTimeFormat(if (isSystem24HourFormat) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
             .setHour(8)
             .setMinute(0)
-            .setTitleText("Select Time")
+            .setTitleText(getString(R.string.select_time))
             .build()
     }
 
@@ -270,9 +270,9 @@ class ReservasCampo: AppCompatActivity() {
 
     private fun showInvalidTimeDialog() {
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Invalid Time")
-            .setMessage("Please select a time after the current time.")
-            .setPositiveButton("OK", null)
+            .setTitle(getString(R.string.invalid_time))
+            .setMessage(getString(R.string.select_time_late))
+            .setPositiveButton(getString(R.string.ok), null)
             .create()
 
         dialog.show()
@@ -286,9 +286,9 @@ class ReservasCampo: AppCompatActivity() {
 
     private fun showOutOfRangeDialog() {
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Invalid Time")
-            .setMessage("Please select a time between 8:00 and 18:00.")
-            .setPositiveButton("OK", null)
+            .setTitle(getString(R.string.invalid_time))
+            .setMessage(getString(R.string.select_time_range2))
+            .setPositiveButton(getString(R.string.ok), null)
             .create()
 
         dialog.show()
@@ -332,8 +332,8 @@ class ReservasCampo: AppCompatActivity() {
 
     private fun showReservationSuccessDialog(reservaGeneral: HashMap<String, String?>) {
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Reserva completada")
-            .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
+            .setTitle(getString(R.string.reservation_complete))
+            .setMessage(getString(R.string.reservation_complete_message))
             .setPositiveButton("Aceptar") { _, _ ->
                 db.collection("reservasGeneral").add(reservaGeneral).addOnSuccessListener { documentReference ->
 
@@ -353,6 +353,22 @@ class ReservasCampo: AppCompatActivity() {
             }
             .create()
 
+        dialog.show()
+    }
+
+    override fun onBackPressed() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(getString(R.string.back))
+        dialogBuilder.setMessage(getString(R.string.back_reservation))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(this, MenuReservas::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
         dialog.show()
     }
 }

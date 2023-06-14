@@ -186,7 +186,7 @@ class ReservasRestaurante : AppCompatActivity() {
             val textInputGuests = textInputGuests?.editText?.text.toString()
 
             if(textInputGuests.isEmpty()){
-                Toast.makeText(this, "Por favor, diga los acompañantes", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.all_data), Toast.LENGTH_SHORT).show()
             } else {
                 db.collection("reservasRestaurante").add(reserva).addOnSuccessListener {documentReference ->
 
@@ -269,9 +269,9 @@ class ReservasRestaurante : AppCompatActivity() {
 
     private fun showInvalidTimeDialog() {
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Invalid Time")
-            .setMessage("Please select a time after the current time.")
-            .setPositiveButton("OK", null)
+            .setTitle(getString(R.string.invalid_time))
+            .setMessage(getString(R.string.select_time_late))
+            .setPositiveButton(getString(R.string.ok), null)
             .create()
 
         dialog.show()
@@ -286,9 +286,9 @@ class ReservasRestaurante : AppCompatActivity() {
 
 
     private fun showOutOfRangeDialog() {
-        val dialog = AlertDialog.Builder(this).setTitle("Invalid Time")
-            .setMessage("Please select a time between 10:00 and 16:00 or between 20:00 and 01:00.")
-            .setPositiveButton("OK", null).create()
+        val dialog = AlertDialog.Builder(this).setTitle(getString(R.string.invalid_time))
+            .setMessage(getString(R.string.select_time_range))
+            .setPositiveButton(getString(R.string.ok), null).create()
 
         dialog.show()
     }
@@ -331,9 +331,9 @@ class ReservasRestaurante : AppCompatActivity() {
 
     private fun showReservationSuccessDialog(reservaGeneral: HashMap<String, String?>) {
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Reserva completada")
-            .setMessage("Gracias por tu reserva. Serás redirigido al menú de la aplicación.")
-            .setPositiveButton("Aceptar") { _, _ ->
+            .setTitle(getString(R.string.reservation_complete))
+            .setMessage(getString(R.string.reservation_complete_message))
+            .setPositiveButton(getString(R.string.accept)) { _, _ ->
                 db.collection("reservasGeneral").add(reservaGeneral).addOnSuccessListener { documentReference ->
 
                     // La reserva se ha insertado con éxito
@@ -355,6 +355,20 @@ class ReservasRestaurante : AppCompatActivity() {
         dialog.show()
     }
 
-
+    override fun onBackPressed() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(getString(R.string.back))
+        dialogBuilder.setMessage(getString(R.string.back_reservation))
+        dialogBuilder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            val intent = Intent(this, MenuReservas::class.java)
+            startActivity(intent)
+            finish()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
 
 }

@@ -1,59 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Santa Clara Golf Club</string>
     <string name="login_name">Login</string>
-    <string name="register_name">Sign up</string>
-    <string name="btn_login">Log in</string>
-    <string name="user">User</string>
-    <string name="name">Name</string>
-    <string name="surname">Surname</string>
-    <string name="phone">Phone</string>
+    <string name="register_name">Registrarse</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="user">Usuario</string>
+    <string name="name">Nombre</string>
+    <string name="surname">Apellidos</string>
+    <string name="phone">Nº Teléfono</string>
     <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="repeat_password">Confirm password</string>
-    <string name="country">Country</string>
-    <string name="btn_register">Register</string>
-    <string name="btn_confirm">Confirm</string>
-    <string name="btn_continue">Continue</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="reservation_day">Booking date</string>
-    <string name="reservation_hour">Hour date</string>
-    <string name="reservation_pack">Pack date</string>
-    <string name="reservation_guests">Guests</string>
-    <string name="price">Price</string>
-    <string name="shoes">Shoes</string>
-    <string name="stick">Sticks</string>
-    <string name="golf_balls">Balls</string>
-    <string name="golf_goves">Gloves</string>
-    <string name="pitch_fork">Pitch fork</string>
+    <string name="password">Contraseña</string>
+    <string name="repeat_password">Repetir Contraseña</string>
+    <string name="country">Pais</string>
+    <string name="btn_register">Registrar</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="btn_continue">Continuar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="reservation_day">Dia de la reserva</string>
+    <string name="reservation_hour">Hora de la reserva</string>
+    <string name="reservation_pack">Pack de la reserva</string>
+    <string name="reservation_guests">Acompañantes</string>
+    <string name="price">Precio</string>
+    <string name="shoes">Calzados</string>
+    <string name="stick">Palos</string>
+    <string name="golf_balls">Pelotas</string>
+    <string name="golf_goves">Guantes</string>
+    <string name="pitch_fork">Arreglpiques</string>
     <string name="ok">Ok</string>
-    <string name="change_lenguage">Change lenguage</string>
-    <string name="not_count">Don\'t have an account? Click here.</string>
-    <string name="movements">Check transactions</string>
-    <string name="manage_users">Manage users</string>
-    <string name="booking_today">Bookings for today</string>
-    <string name="booking_type">Booking type</string>
-    <string name="forgot_password">Forgot your password?</string> <string name="introduce_email">Enter your email address.</string>
-    <string name="email_sent">Email sent.</string>
-    <string name="email_sent_to">An email has been sent to</string>
-    <string name="to_reset_password">To reset your password.</string>
+    <string name="change_lenguage">Cambiar Idioma</string>
+    <string name="not_count">¿No tienes cuenta? Pulsa aquí</string>
+    <string name="movements">Ver movimientos</string>
+    <string name="manage_users">Administrar Usuarios</string>
+    <string name="booking_today">Reservas de hoy</string>
+    <string name="booking_type">Tipo Reserva</string>
+    <string name="forgot_password">¿Olvidate la contraseña?</string>
+    <string name="introduce_email">Ingrese su correo electrónico</string>
+    <string name="email_sent">Correo electrónico enviado?</string>
+    <string name="email_sent_to">Se ha enviado un correo electrónico a</string>
+    <string name="to_reset_password">para restablecer la contraseña.</string>
     <string name="title_error_sent_email">Error al enviar el correo electrónico</string>
     <string name="error_verify_email">Hubo un error al enviar el correo electrónico. Verifique la dirección de correo electrónico e inténtelo nuevamente.</string>
     <string name="accept">Aceptar</string>
-    <string name="user_no_exist">The user does not exist.</string>
-    <string name="password_failed">The password is incorrect</string>
-    <string name="init_error">Error logging in</string>
-    <string name="be_admin">You are an administrator</string>
-    <string name="not_be_admin">You are not an administrator</string>
-    <string name="email_no_verify">The email is not verified</string>
-    <string name="send">Send</string>
+    <string name="user_no_exist">El usuario no existe</string>
+    <string name="password_failed">La contraseña es incorrecta</string>
+    <string name="init_error">Error al iniciar sesión</string>
+    <string name="be_admin">Eres un administrador</string>
+    <string name="not_be_admin">No eres un administrador</string>
+    <string name="email_no_verify">El correo no está verificado</string>
+    <string name="send">Enviar</string>
     <string name="invalid_user">Usuario no valido</string>
     <string name="invalid_password">Contraseña no valida</string>
     <string name="out">Salir</string>
     <string name="confirm_exit_message">¿Desea salir de la aplicación?</string>
-    <string name="yes">Yes</string>
+    <string name="yes">Sí</string>
     <string name="no">No</string>
-
     <string name="password_long">La contraseña debe tener al menos 6 caracteres</string>
     <string name="email_register">El email ya está registrado</string>
     <string name="phone_regiter">El número de teléfono ya está registrado</string>
@@ -69,7 +68,7 @@
     <string name="change_password_error_message">Error al enviar el correo de restablecimiento de contraseña</string>
 
     <!-- Menú de cambio de correo electrónico -->
-    <string name="menu_change_email">Cambiar correo electrónico</string>
+    <string name="menu_change_email">Cambiar email</string>
     <string name="change_email_title">Cambiar correo electrónico</string>
     <string name="change_email_dialog_message">Introduce el nuevo correo electrónico</string>
     <string name="change_email_dialog_positive_button">Aceptar</string>
@@ -98,4 +97,40 @@
     <string name="name_creator">Daniel Jesús Doblas Florido</string>
     <string name="phone_creator">652 68 70 23</string>
     <string name="version">1.0.0</string>
+
+    <string name="back">Volver</string>
+    <string name="admin_confirmation_message">¿Desea volver al menu de administrador?</string>
+    <string name="back_reservation">¿Deseas vovler a la selección de reservas?, se perderan todos los datos.</string>
+    <string name="confirm_change">Cambios realizados correctamente.</string>
+    <string name="alert">Advertencia</string>
+    <string name="your_email">El correo electronico es el suyo, la app se reiniciará</string>
+    <string name="error_change_password">Error al cambiar la contraseña.</string>
+    <string name="email_change_password">Correo de Cambio de contraseña, enviado correctamente.</string>
+    <string name="error_user_01">Error al buscar el usuario anterior</string>
+    <string name="error_user_create">Error al crear el nuevo usuario</string>
+    <string name="error_user_delete_temporal">Error al eliminar el usuario del documento temporal</string>
+    <string name="error_update_email_not_send_email">Se ha actualizado el correo electrónico, pero no se pudo enviar el correo de verificación.</string>
+    <string name="email_equal">El correo electrónico es el mismo.</string>
+    <string name="error_data">Error al obtener los datos.</string>
+    <string name="reservation_complete">Reserva completada.</string>
+    <string name="reservation_complete_message">Gracias por tu reserva. Serás redirigido al menú de la aplicación.</string>
+    <string name="invalid_time">Tiempo no disponible</string>
+    <string name="select_time_late">Por favor, selecciona una hora posterior a la hora actual.</string>
+    <string name="select_time">Selecciona la hora</string>
+    <string name="all_data">Por favor, complete todos los campos</string>
+    <string name="select_time_range">Please select a time between 10:00 and 16:00 or between 20:00 and 01:00.</string>
+    <string name="select_time_range2">Please select a time between 8:00 and 18:00.</string>
+    <string name="phone_length">El número de teléfono debe tener 9 dígitos.</string>
+    <string name="register_back">¿Desea volver al login?, se perderan todos los cambios</string>
+    <string name="empty_fields">Por favor, completa todos los campos.</string>
+    <string name="email_verify">Email verificado.</string>
+
+
+
+
+
+
+
+
+
 </resources>

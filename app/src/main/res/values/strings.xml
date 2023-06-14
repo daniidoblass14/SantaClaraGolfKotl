@@ -68,7 +68,7 @@
     <string name="change_password_error_message">Error al enviar el correo de restablecimiento de contraseña</string>
 
     <!-- Menú de cambio de correo electrónico -->
-    <string name="menu_change_email">Cambiar correo electrónico</string>
+    <string name="menu_change_email">Cambiar email</string>
     <string name="change_email_title">Cambiar correo electrónico</string>
     <string name="change_email_dialog_message">Introduce el nuevo correo electrónico</string>
     <string name="change_email_dialog_positive_button">Aceptar</string>
@@ -97,6 +97,40 @@
     <string name="name_creator">Daniel Jesús Doblas Florido</string>
     <string name="phone_creator">652 68 70 23</string>
     <string name="version">1.0.0</string>
+
+    <string name="back">Volver</string>
+    <string name="admin_confirmation_message">¿Desea volver al menu de administrador?</string>
+    <string name="back_reservation">¿Deseas vovler a la selección de reservas?, se perderan todos los datos.</string>
+    <string name="confirm_change">Cambios realizados correctamente.</string>
+    <string name="alert">Advertencia</string>
+    <string name="your_email">El correo electronico es el suyo, la app se reiniciará</string>
+    <string name="error_change_password">Error al cambiar la contraseña.</string>
+    <string name="email_change_password">Correo de Cambio de contraseña, enviado correctamente.</string>
+    <string name="error_user_01">Error al buscar el usuario anterior</string>
+    <string name="error_user_create">Error al crear el nuevo usuario</string>
+    <string name="error_user_delete_temporal">Error al eliminar el usuario del documento temporal</string>
+    <string name="error_update_email_not_send_email">Se ha actualizado el correo electrónico, pero no se pudo enviar el correo de verificación.</string>
+    <string name="email_equal">El correo electrónico es el mismo.</string>
+    <string name="error_data">Error al obtener los datos.</string>
+    <string name="reservation_complete">Reserva completada.</string>
+    <string name="reservation_complete_message">Gracias por tu reserva. Serás redirigido al menú de la aplicación.</string>
+    <string name="invalid_time">Tiempo no disponible</string>
+    <string name="select_time_late">Por favor, selecciona una hora posterior a la hora actual.</string>
+    <string name="select_time">Selecciona la hora</string>
+    <string name="all_data">Por favor, complete todos los campos</string>
+    <string name="select_time_range">Please select a time between 10:00 and 16:00 or between 20:00 and 01:00.</string>
+    <string name="select_time_range2">Please select a time between 8:00 and 18:00.</string>
+    <string name="phone_length">El número de teléfono debe tener 9 dígitos.</string>
+    <string name="register_back">¿Desea volver al login?, se perderan todos los cambios</string>
+    <string name="empty_fields">Por favor, completa todos los campos.</string>
+    <string name="email_verify">Email verificado.</string>
+
+
+
+
+
+
+
 
 
 </resources>

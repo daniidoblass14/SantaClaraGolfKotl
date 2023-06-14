@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
-import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.PopupMenu
@@ -16,6 +15,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.makeramen.roundedimageview.RoundedImageView
+
+
 /**
  * Clase que representa el menú de reservas.
  */
@@ -211,7 +212,7 @@ class MenuReservas : AppCompatActivity() {
 
                         val dialogBuilder = AlertDialog.Builder(this)
                         dialogBuilder.setTitle(getString(R.string.information_dialog_title))
-                        dialogBuilder.setMessage("Teléfono: $phoneNumber\nVersión: $appVersion\nCreador: $creator")
+                        dialogBuilder.setMessage("Phone: $phoneNumber\nVersion: $appVersion\nAuthor: $creator")
                         dialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
                             dialog.dismiss()
                         }
@@ -261,6 +262,10 @@ class MenuReservas : AppCompatActivity() {
         }
         val dialog = dialogBuilder.create()
         dialog.show()
+    }
+
+    override fun onBackPressed() {
+       showLogoutConfirmationDialog()
     }
 
 
